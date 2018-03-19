@@ -1,0 +1,32 @@
+<#list class.methods as method>
+    <h3>${method.apiName!}</h3>
+    <ul style="list-style: none; padding: 0; margin-left: 20px">
+        <li>请求地址:${method.requestPath!}</li>
+        <li>描述:${method.apiDescription!}</li>
+        <li>请求方法:${method.requestMethod!}</li>
+    </ul>
+    <h4>参数列表:</h4>
+    <table style="margin-left: 20px">
+        <thead>
+            <th>名称</th>
+            <th>类型</th>
+            <th>必填</th>
+            <th>默认值</th>
+            <th>描述</th>
+        </thead>
+        <tbody>
+            <#list method.getRequestParam() as requestParam>
+                 <tr>
+                     <td>${requestParam.name!}</td>
+                     <td>${requestParam.type!}</td>
+                     <td>${requestParam.isRequired()?string('是','否')}</td>
+                     <td>${requestParam.defaultValue!}</td>
+                     <td>${requestParam.description!}</td>
+                 </tr>
+            </#list>
+        </tbody>
+    </table>
+    <hr/>
+</#list>
+
+

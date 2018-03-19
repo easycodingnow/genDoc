@@ -1,0 +1,21 @@
+ <table style="margin-left: 20px">
+        <thead>
+            <th>名称</th>
+            <th>类型</th>
+            <th>描述</th>
+        </thead>
+        <tbody>
+            <#list class.fields as field>
+                 <tr>
+                     <td>${field.name!}</td>
+                     <td>${field.type!}</td>
+                     <td>
+                        <#if field.comment??>
+                            ${field.comment.description}
+                        </#if>
+                     </td>
+                     <if >
+                 </tr>
+            </#list>
+        </tbody>
+ </table>

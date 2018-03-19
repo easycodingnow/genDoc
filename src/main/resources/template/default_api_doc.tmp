@@ -1,0 +1,9 @@
+<#list class.methods as method>
+    <#if method.isPublic()>
+方法名称:${method.name}
+返回类型:${method.type}
+    </#if>
+</#list>
+<p>adasd</p>
+
+
