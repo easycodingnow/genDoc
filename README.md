@@ -58,6 +58,7 @@ public class DemoController {
 
     /**
      * 获取菜单列表
+     * 这是一段方法描述但是没有任何意义
      * @return
      */
     @RequestMapping(value = "/getMenuList", method = {RequestMethod.POST,  RequestMethod.GET})
@@ -69,7 +70,8 @@ public class DemoController {
 
     /**
      * 根据获取城市列表详情
-     * @param ids  id 列表
+     * 这是一段方法描述但是没有任何意义
+     * @param ids  id列表
      * @param num  要获取的数量
      * @return
      */
