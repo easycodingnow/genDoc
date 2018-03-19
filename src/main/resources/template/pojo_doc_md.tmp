@@ -1,0 +1,5 @@
+| 名称 | 类型 | 描述 |
+|:---:|:---:|:---:|
+ <#list class.fields as field>
+| ${field.name!} | ${field.type!} | <#if field.comment??> ${field.comment.description} </#if> |
+ </#list>

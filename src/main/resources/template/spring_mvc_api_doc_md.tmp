@@ -1,0 +1,14 @@
+<#list class.methods as method>
+#### ${method.apiName!}
+* 请求地址:${method.requestPath!}
+* 描述:${method.apiDescription!}
+* 请求方法:${method.requestMethod!}
+##### 参数列表
+| 名称 | 类型 | 必填 | 默认值 | 描述 |
+|:---: |:---:|:---: |:---: |:---:|
+ <#list method.getRequestParam() as requestParam>
+|${requestParam.name!}|${requestParam.type!}|${requestParam.isRequired()?string('是','否')}|${requestParam.defaultValue!" "}|${requestParam.description!" "}
+</#list>
+</#list>
+
+
