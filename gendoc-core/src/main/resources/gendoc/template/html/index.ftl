@@ -347,7 +347,7 @@
                         .replace("{{required}}", "")
                         .replace("{{type}}", requestParam['type'] ? requestParam['type'] : "")
                         .replace("{{defaultValue}}", requestParam["defaultValue"]?requestParam["defaultValue"]:"")
-                        .replace("{{desc}}", requestParam['description'] ? requestParam['description'] : "");
+                        .replace("{{desc}}", requestParam['desc'] ? requestParam['desc'] : "");
             }
             tableHtml += requestTableTemp
                     .replace("{{requestType}}", param['typeDoc'][i]['type'])
