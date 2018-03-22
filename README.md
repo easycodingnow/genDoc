@@ -44,9 +44,9 @@ Help you to generate API documents
 * @param user  #type:com.domian.User,com.domian.Person# 在参数注释的 后面添加#type:...# 元信息可以生成请求实体描述
 
 # 计划
-1.目前只支持spring mvc类型web项目（后面会陆续支持各种类型web项目的生成，如果你有需求可自行改造，提交pr）
-2.丰富文档输出类型，多种样式的html文档，makrdown，word文档
-3.在线调试api
+* 目前只支持spring mvc类型web项目（后面会陆续支持各种类型web项目的生成，如果你有需求可自行改造，提交pr）
+* 丰富文档输出类型，多种样式的html文档，makrdown，word文档
+* 在线调试api
 
 # 演示
 
