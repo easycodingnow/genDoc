@@ -7,9 +7,21 @@
     <groupId>com.easycodingnow</groupId>
 
     <artifactId>gendoc-demo-example</artifactId>
+    <name>gendoc-demo-example</name>
 
     <version>1.0-SNAPSHOT</version>
-    <name>gendoc-demo-example</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.easycodingnow</groupId>
+            <artifactId>gendoc-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.easycodingnow</groupId>
+            <artifactId>gendoc-web</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
 
 </project>

@@ -1,11 +1,14 @@
 package com.easycodingnow.template;
 
+import com.easycodingnow.GenDoc;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.utils.IOUtils;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -18,37 +21,45 @@ import java.util.Map;
  * @since 2018/3/8
  */
 public class TemplateParse {
+    private static final Log logger = LogFactory.getLog(TemplateParse.class);
+    private static final String TEMPLATE_PREFIX = "/gendoc/template/";
+
+
     private static TemplateParse templateParse = new TemplateParse();
     private   Configuration configuration;
     private List<String> loadTemplateList = new ArrayList<String>();
 
 
-    private Template getTemplate(String key) throws Exception{
-        if(!loadTemplateList.contains(key)){
-            String content;
-            content = loadTemplateFromConfig(key);
-
-            if(content == null){
-                content = loadTemplateFromDisk(key);
-            }
-
-            if(content == null){
-               throw  new Exception("template `"+key+"` not exist!");
-            }
-
-            StringTemplateLoader stringTemplateLoader = (StringTemplateLoader) configuration.getTemplateLoader();
-            stringTemplateLoader.putTemplate(key, content);
+    private Template getTemplate(String key) throws IOException {
+        if(!loadTemplateList.contains(key) && loadTemplate(key)){
             loadTemplateList.add(key);
         }
 
         return configuration.getTemplate(key);
     }
 
-    private String loadTemplateFromDisk(String key){
-        String file = getClass().getResource("/").getFile()+ "gendoc/template/" +key;
+    private boolean loadTemplate(String key) {
+        String content;
+        content = loadTemplateFromConfig(key);
 
+        if (content == null) {
+            content = loadTemplateFromDisk(key);
+        }
+
+        if (content == null) {
+            logger.error("gendoc parse key:" + key + "  template not found!");
+            return false;
+        } else {
+            StringTemplateLoader stringTemplateLoader = (StringTemplateLoader) configuration.getTemplateLoader();
+            stringTemplateLoader.putTemplate(key, content);
+            return true;
+        }
+    }
+
+
+    private String loadTemplateFromDisk(String key){
         try {
-           return IOUtils.toString(new FileReader(file));
+           return IOUtils.toString(new InputStreamReader(TemplateParse.class.getResourceAsStream(TEMPLATE_PREFIX+key)));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,6 +77,13 @@ public class TemplateParse {
         configuration.setTemplateLoader(stringTemplateLoader);
         configuration.setObjectWrapper(new DefaultObjectWrapper(Configuration.getVersion()));
         configuration.setDefaultEncoding("UTF-8");
+
+        initTemplateCache();
+    }
+
+
+    public void initTemplateCache(){
+        loadTemplate("html/jquery.js");
     }
 
     public static String parseTemplate(String templateKey, Class cls) throws Exception{

@@ -2,7 +2,6 @@ package com.easycodingnow.reflect;
 
 import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.StringUtils;
-import lombok.Data;
 
 import java.util.List;
 
@@ -10,14 +9,13 @@ import java.util.List;
  * @author lihao
  * @since 2018/3/8
  */
-@Data
 public class Member {
 
     private Member parentMember;
 
     private String packageName;
 
-    private String[] sourceRoot;
+    private List<String> sourceRoot;
 
 
     private String name;
@@ -30,7 +28,7 @@ public class Member {
 
     private List<String> modifier;
 
-    public String[] getSourceRoot() {
+    public List<String> getSourceRoot() {
 
         return sourceRoot!=null?sourceRoot:(parentMember!=null?parentMember.getSourceRoot():null);
     }
@@ -94,5 +92,62 @@ public class Member {
         }
 
         return null;
+    }
+
+
+    public Member getParentMember() {
+        return parentMember;
+    }
+
+    public void setParentMember(Member parentMember) {
+        this.parentMember = parentMember;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
+    }
+
+    public void setSourceRoot(List<String> sourceRoot) {
+        this.sourceRoot = sourceRoot;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Comment getComment() {
+        return comment;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
+
+    public List<Annotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(List<Annotation> annotations) {
+        this.annotations = annotations;
+    }
+
+    public List<String> getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(List<String> modifier) {
+        this.modifier = modifier;
     }
 }

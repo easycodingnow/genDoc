@@ -1,12 +1,10 @@
 package com.easycodingnow.reflect;
 
-import lombok.Data;
 
 /**
  * @author lihao
  * @since 2018/3/8
  */
-@Data
 public abstract class Annotation {
 
     private Member member;
@@ -14,4 +12,19 @@ public abstract class Annotation {
     private String name;
 
 
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }

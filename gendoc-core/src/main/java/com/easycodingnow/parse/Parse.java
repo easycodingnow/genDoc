@@ -21,13 +21,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by lihao on 2018/3/8.
+ * @author lihao
+ * @since 2018/3/8
  */
 public class Parse {
 
     private static final Log logger = LogFactory.getLog(Parse.class);
 
-    public static Class parse(String fullyName, String[] sourceRoot){
+    public static Class parse(String fullyName, List<String> sourceRoot){
 
         for(String sr:sourceRoot){
             String absPath = sr+"/"+fullyName.replaceAll("\\.", "/")+".java";
@@ -36,7 +37,7 @@ public class Parse {
                 try {
                     return parse(new FileInputStream(file), sourceRoot);
                 } catch (FileNotFoundException e) {
-                    //
+                    logger.error("file not found!", e);
                 }
             }
         }
@@ -46,12 +47,12 @@ public class Parse {
         return null;
     }
 
-    public static Class parse(InputStream inputStream, String[] sourceRoot){
+    public static Class parse(InputStream inputStream, List<String> sourceRoot){
         CompilationUnit cu = JavaParser.parse(inputStream);
         return innerParse(cu, sourceRoot);
     }
 
-    private static Class innerParse(CompilationUnit cu, final String[] sourceRoot){
+    private static Class innerParse(CompilationUnit cu, final List<String> sourceRoot){
         final Class cls = new Class();
 
         cu.accept(new VoidVisitorAdapter<Void>(){

@@ -1,6 +1,6 @@
 package com.easycodingnow.reflect;
 
-import lombok.Data;
+;
 
 import java.util.List;
 import java.util.Map;
@@ -9,15 +9,29 @@ import java.util.Map;
  * @author lihao
  * @since 2018/3/8
  */
-@Data
 public  class NormalAnnotation  extends Annotation{
     private List<Pair> pairList;
 
 
-    @Data
     public static class Pair{
         private String name;
         private String value;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            this.value = value;
+        }
     }
 
     public Pair getPair(String name){
@@ -39,4 +53,12 @@ public  class NormalAnnotation  extends Annotation{
         return pair != null?pair.getValue():null;
     }
 
+
+    public List<Pair> getPairList() {
+        return pairList;
+    }
+
+    public void setPairList(List<Pair> pairList) {
+        this.pairList = pairList;
+    }
 }

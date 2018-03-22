@@ -1,4 +1,4 @@
-package com.easycodingnow;
+package easycodingnow;
 
 
 import org.junit.Test;

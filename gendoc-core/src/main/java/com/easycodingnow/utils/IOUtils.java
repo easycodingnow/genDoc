@@ -2,6 +2,8 @@ package com.easycodingnow.utils;
 
 import java.io.*;
 import java.nio.channels.Channel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author lihao
@@ -13,6 +15,30 @@ public class IOUtils {
 
     private IOUtils() {
     }
+
+    public static List<String> getJavaFileList(String filePath) {
+        List<String> fileList = new ArrayList<String>();
+        File file = new File(filePath);
+        if(file.exists()){
+            File[] childFiles = file.listFiles();
+            if(childFiles != null && childFiles.length > 0) {
+                for (File childFile : childFiles) {
+                    if (childFile.isDirectory()) {
+                        fileList.addAll(getJavaFileList(childFile.getPath()));
+                    } else {
+                        String childFilePath = childFile.getPath();
+
+                        if(childFilePath.endsWith(".java")){
+                            fileList.add(childFilePath);
+                        }
+                    }
+                }
+            }
+        }
+
+        return fileList;
+    }
+
 
     public static void copy(InputStream input, OutputStream output) throws IOException {
         copy((InputStream)input, (OutputStream)output, 16384);

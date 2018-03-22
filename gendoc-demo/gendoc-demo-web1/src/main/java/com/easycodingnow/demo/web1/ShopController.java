@@ -2,6 +2,7 @@ package com.easycodingnow.demo.web1;
 
 import com.easycodingnow.demo.domain.Shop;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -27,16 +28,28 @@ public class ShopController {
     }
 
 
+    //参数实体的方式，需要标注参数的类型
     /**
-     * 创建商品
-     * @param shop
-     * @return long 商品id
+     * 创建商店
+     * @param shop  #type:com.easycodingnow.demo.domain.Shop,com.easycodingnow.demo.domain.Shop,com.easycodingnow.demo.domain.Shop#
+     * @return #type:com.easycodingnow.demo.domain.Shop,com.easycodingnow.demo.domain.Shop#
      */
     @RequestMapping("createShop")
     public Object createShop(Shop shop){
         return null;
     }
 
+
+    //PathVariable 的方式
+    /**
+     * 删除商店
+     * @param id 商店id
+     * @return 是否成功
+     */
+    @RequestMapping("deleteShop/{id}")
+    public Object deleteShop(@PathVariable(name="id") long id){
+        return null;
+    }
 
 
     //解析将会跳过@Deprecated标识的方法

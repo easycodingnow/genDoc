@@ -1,14 +1,14 @@
 package com.easycodingnow.template.vo.spring;
 
 import com.easycodingnow.reflect.*;
-import com.easycodingnow.template.vo.DocMember;
+import com.easycodingnow.template.vo.DocApiMember;
 import com.easycodingnow.utils.StringUtils;
 
 /**
  * @author lihao
  * @since 2018/3/21
  */
-public abstract class SpringMvcMember implements DocMember{
+public abstract class SpringMvcApiMember implements DocApiMember {
 
     protected Member member;
 
@@ -21,7 +21,7 @@ public abstract class SpringMvcMember implements DocMember{
     private String requestPath;
 
 
-    public SpringMvcMember(Member member) {
+    public SpringMvcApiMember(Member member) {
         this.member = member;
 
         //解析名称

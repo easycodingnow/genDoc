@@ -3,9 +3,9 @@ package com.easycodingnow.template.vo.spring;
 import com.easycodingnow.parse.Parse;
 import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
-import com.easycodingnow.template.vo.DocMethod;
+import com.easycodingnow.template.vo.DocApiMethod;
 import com.easycodingnow.template.vo.DocPojoClass;
-import com.easycodingnow.template.vo.RequestParam;
+import com.easycodingnow.template.vo.DocRequestParam;
 import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.StringUtils;
 
@@ -17,9 +17,9 @@ import java.util.Map;
  * @author lihao
  * @since 2018/3/9
  */
-public class SpringMvcMethod extends SpringMvcMember implements DocMethod{
+public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod {
 
-    private List<RequestParam> requestParams;
+    private List<DocRequestParam> requestParams;
 
     private String returnDesc;
 
@@ -39,7 +39,7 @@ public class SpringMvcMethod extends SpringMvcMember implements DocMethod{
         returnTypes = parseReturnType();
     }
 
-    public List<RequestParam> getRequestParams() {
+    public List<DocRequestParam> getRequestParams() {
         return requestParams;
     }
 
@@ -112,9 +112,9 @@ public class SpringMvcMethod extends SpringMvcMember implements DocMethod{
         return false;
     }
 
-    private List<RequestParam> parseRequestParams(){
+    private List<DocRequestParam> parseRequestParams(){
         List<MethodParam> params = ((Method)member).getParams();
-        List<RequestParam>  requestParams = new ArrayList<RequestParam>();
+        List<DocRequestParam>  requestParams = new ArrayList<DocRequestParam>();
 
         if(!CollectionUtils.isEmpty(params)){
             for(MethodParam methodParam:params){
@@ -130,7 +130,7 @@ public class SpringMvcMethod extends SpringMvcMember implements DocMethod{
                     continue;
                 }
 
-                RequestParam requestParam = new RequestParam();
+                DocRequestParam requestParam = new DocRequestParam();
 
                 requestParam.setType(methodParam.getType());
 

@@ -3,8 +3,7 @@ package com.easycodingnow.template.vo;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.reflect.Field;
 import com.easycodingnow.utils.CollectionUtils;
-import lombok.Data;
-import lombok.Getter;
+import jdk.nashorn.internal.objects.annotations.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +15,10 @@ import java.util.List;
 public class DocPojoClass {
     private Class cls;
 
-    @Getter
     private List<DocField> fields = new ArrayList<DocField>();
 
-    @Getter
     private String type;
 
-    @Getter
     private String desc;
 
 
@@ -44,5 +40,37 @@ public class DocPojoClass {
             }
         }
 
+    }
+
+    public Class getCls() {
+        return cls;
+    }
+
+    public void setCls(Class cls) {
+        this.cls = cls;
+    }
+
+    public List<DocField> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<DocField> fields) {
+        this.fields = fields;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
     }
 }

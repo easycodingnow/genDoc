@@ -3,9 +3,7 @@ package com.easycodingnow.template.vo.spring;
 import com.easycodingnow.reflect.Annotation;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.reflect.Method;
-import com.easycodingnow.template.vo.DocMethod;
-import com.easycodingnow.template.vo.spring.SpringMvcClass;
-import com.easycodingnow.template.vo.spring.SpringMvcMethod;
+import com.easycodingnow.template.vo.DocApiMethod;
 import com.easycodingnow.utils.CollectionUtils;
 
 import java.util.ArrayList;
@@ -31,8 +29,8 @@ public class SpringConvertHelper {
         return false;
     }
 
-    public static SpringMvcClass convertToSpringMvcClass(Class cls){
-        List<DocMethod> methodList = new ArrayList<DocMethod>();
+    public static SpringMvcApiClass convertToSpringMvcClass(Class cls){
+        List<DocApiMethod> methodList = new ArrayList<DocApiMethod>();
 
         if(!CollectionUtils.isEmpty(cls.getMethods())){
 
@@ -43,6 +41,6 @@ public class SpringConvertHelper {
             }
         }
 
-        return new SpringMvcClass(methodList, cls);
+        return new SpringMvcApiClass(methodList, cls);
     }
 }

@@ -6,9 +6,9 @@ import java.util.List;
  * @author lihao
  * @since 2018/3/21
  */
-public interface DocMethod extends DocMember{
+public interface DocApiMethod extends DocApiMember {
 
-     List<RequestParam> getRequestParams();
+     List<DocRequestParam> getRequestParams();
 
 
      String getReturnDesc();

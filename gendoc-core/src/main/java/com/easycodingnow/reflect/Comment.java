@@ -2,7 +2,6 @@ package com.easycodingnow.reflect;
 
 import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.StringUtils;
-import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +12,6 @@ import java.util.Map;
  * @author lihao
  * @since 2018/3/8
  */
-@Data
 public class Comment {
 
     private String description;
@@ -99,7 +97,6 @@ public class Comment {
         return null;
     }
 
-    @Data
     public static class Tag{
         String tagName;
 
@@ -109,5 +106,49 @@ public class Comment {
 
         Map<String, String> metaData = new HashMap<String, String>();
 
+        public String getTagName() {
+            return tagName;
+        }
+
+        public void setTagName(String tagName) {
+            this.tagName = tagName;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public Map<String, String> getMetaData() {
+            return metaData;
+        }
+
+        public void setMetaData(Map<String, String> metaData) {
+            this.metaData = metaData;
+        }
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<Tag> getTags() {
+        return tags;
     }
 }
