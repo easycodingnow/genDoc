@@ -172,6 +172,7 @@
             z-index: 1000;
             background-color: white;
             left: 27%;
+            display: none;
         }
     </style>
 </head>
@@ -197,7 +198,7 @@
     </section>
 </aside>
 <div class="content-box">
-    <section class="content">
+    <section class="content" style="margin-bottom: 100px">
         <div class="doc-content-box">
             <div class="doc-title-box">
                 <h2 id="method-name"></h2>
@@ -243,7 +244,7 @@
 
 </div>
 <section class="modal-box">
-    <div class="param-tables">
+    <div class="param-tables" style="padding: 10px">
 
     </div>
 
@@ -258,7 +259,7 @@
             '<a onclick="menuClick(this)" data-index="{{class_index}}" href="#" class="apiClass">' +
             '<span>{{apiName}}</span>' +
             '</a>' +
-            '<ul '+(filterStr?'style="display: block"':"")+' class="treeview-menu">' +
+            '<ul {{style}} class="treeview-menu">' +
             '{{subMenuList}}</ul></li>';
 
 
@@ -388,12 +389,12 @@
 
                 }
                 html += menuTmep.replace("{{class_index}}", i)
+                        .replace("{{style}}", (filterStr?'style="display: block"':""))
                         .replace("{{apiName}}", apiJson[i]['apiName'])
                         .replace("{{subMenuList}}", menuHtml);
             }
         }
         $(".sidebar-menu").empty().html(html);
-        showRequestModal();
     }
 
 

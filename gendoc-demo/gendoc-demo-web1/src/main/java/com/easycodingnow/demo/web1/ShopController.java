@@ -31,8 +31,8 @@ public class ShopController {
     //参数实体的方式，需要标注参数的类型
     /**
      * 创建商店
-     * @param shop  #type:com.easycodingnow.demo.domain.Shop,com.easycodingnow.demo.domain.Shop,com.easycodingnow.demo.domain.Shop#
-     * @return #type:com.easycodingnow.demo.domain.Shop,com.easycodingnow.demo.domain.Shop#
+     * @param shop  #type:com.easycodingnow.demo.domain.Shop#
+     * @return #type:com.easycodingnow.demo.domain.Shop#
      */
     @RequestMapping("createShop")
     public Object createShop(Shop shop){
