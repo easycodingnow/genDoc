@@ -1,4 +1,4 @@
-# genDoc
+# GenDoc
 Help you to generate API documents
 
 通过注释生成api文档。
@@ -8,7 +8,7 @@ Help you to generate API documents
 * 注释即文档，生成文档必须书写规范的代码注释，提高了代码的可读性。
 * 生成离线html文档，文档页面美观直接，支持接口搜索，实体信息查看，比传统的手写文档更加方便快捷。
 
-# quick start
+# Quick Start
 * clone 代码到本地
 * 打开gendoc-demo/gendoc-demo-example/src/main/java/com/easycodingnow/demo/example/Main.java 类
 ``` java
@@ -37,7 +37,7 @@ Help you to generate API documents
 # 如何集成到自己的项目
 将example/Main.java  中的扫描的源码路径 和 包改成自己项目的。运行main方法即可生成。
 
-# tip
+# Tip
 * 类和方法的注释第一行默认为注释或者方法的名称，其他行为描述
 * 注释添加#ignore#将会调过此类或者方法的解析
 * @return #type:com.domian.User,com.domian.Person#   在方法注释后面添加#type:...# 元信息可以生成返回值描述
