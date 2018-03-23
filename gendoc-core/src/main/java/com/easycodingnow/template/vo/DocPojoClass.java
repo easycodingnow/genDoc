@@ -53,6 +53,15 @@ public class DocPojoClass {
                     }
                 }
 
+                Annotation gsonField = field.getAnnotationByName("SerializedName");
+                if(gsonField != null){
+                    if(gsonField instanceof SingleAnnotation){
+                        name = ((SingleAnnotation) gsonField).getValue();
+                    }else if(gsonField instanceof NormalAnnotation){
+                        name = ((NormalAnnotation) gsonField).getValue("value");
+                    }
+                }
+
                 docField.setName(name);
                 docField.setDesc(field.getComment()!=null?field.getComment().getDescription():"");
                 docField.setType(field.getType());

@@ -2,6 +2,7 @@ package com.easycodingnow.demo.domain;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * 商店
@@ -22,5 +23,6 @@ public class Shop {
     /**
      * 商店介绍
      */
+    @SerializedName("description")
     private String desc;
 }
