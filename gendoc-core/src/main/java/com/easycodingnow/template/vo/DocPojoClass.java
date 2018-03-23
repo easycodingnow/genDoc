@@ -1,7 +1,7 @@
 package com.easycodingnow.template.vo;
 
+import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
-import com.easycodingnow.reflect.Field;
 import com.easycodingnow.utils.CollectionUtils;
 import jdk.nashorn.internal.objects.annotations.Getter;
 
@@ -33,7 +33,27 @@ public class DocPojoClass {
         if(!CollectionUtils.isEmpty(fields)){
             for(Field field:fields){
                 DocField docField = new DocField();
-                docField.setName(field.getName());
+                String name = field.getName();
+
+                Annotation jsonFieldAt = field.getAnnotationByName("JSONField");
+                if(jsonFieldAt != null){
+                    if(jsonFieldAt instanceof SingleAnnotation){
+                        name = ((SingleAnnotation) jsonFieldAt).getValue();
+                    }else if(jsonFieldAt instanceof NormalAnnotation){
+                        name = ((NormalAnnotation) jsonFieldAt).getValue("name");
+                    }
+                }
+
+                Annotation jacksonField = field.getAnnotationByName("JsonProperty");
+                if(jacksonField != null){
+                    if(jacksonField instanceof SingleAnnotation){
+                        name = ((SingleAnnotation) jacksonField).getValue();
+                    }else if(jacksonField instanceof NormalAnnotation){
+                        name = ((NormalAnnotation) jacksonField).getValue("value");
+                    }
+                }
+
+                docField.setName(name);
                 docField.setDesc(field.getComment()!=null?field.getComment().getDescription():"");
                 docField.setType(field.getType());
                 this.fields.add(docField);

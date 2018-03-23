@@ -1,5 +1,8 @@
 package com.easycodingnow.demo.domain;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * 商店
  * @author lihao
@@ -7,9 +10,14 @@ package com.easycodingnow.demo.domain;
  */
 public class Shop {
 
-    private String shopName; //商店名称
+    //商店名称
+    @JSONField(name = "shop_name")
+    private String shopName;
 
-    private Long goodNums; //商品数量
+
+    //商品数量
+    @JsonProperty("good_nums")
+    private Long goodNums;
 
     /**
      * 商店介绍
