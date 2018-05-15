@@ -374,6 +374,11 @@
                 methodName = methodName ? methodName : "";
                 var requestPath = methods[j]['requestPath'];
                 requestPath = requestPath ? requestPath : "";
+                if(requestPath && requestPath[0] !== '/'){
+                    requestPath = "/" + requestPath;
+                }
+                requestPath = apiJson[i]['requestPath']+requestPath;
+                console.info(requestPath);
                 if (!filterStr || methodName.search(filterStr) !== -1
                         || requestPath.search(filterStr) !== -1) {
                     methods[j]['originIndex'] = j;

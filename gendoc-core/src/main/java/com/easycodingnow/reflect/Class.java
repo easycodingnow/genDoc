@@ -13,6 +13,10 @@ public class Class extends Member{
 
     private List<Method> methods;
 
+    private List<Class> innerClass; //内部类
+
+    private Class parentClass; //父类
+
 
     public List<Field> getFields() {
         return fields;
@@ -28,5 +32,21 @@ public class Class extends Member{
 
     public void setMethods(List<Method> methods) {
         this.methods = methods;
+    }
+
+    public List<Class> getInnerClass() {
+        return innerClass;
+    }
+
+    public void setInnerClass(List<Class> innerClass) {
+        this.innerClass = innerClass;
+    }
+
+    public Class getParentClass() {
+        return parentClass;
+    }
+
+    public void setParentClass(Class parentClass) {
+        this.parentClass = parentClass;
     }
 }

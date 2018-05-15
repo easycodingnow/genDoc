@@ -1,5 +1,6 @@
 package com.easycodingnow.template.vo.spring;
 
+import com.easycodingnow.GenConfig;
 import com.easycodingnow.parse.Parse;
 import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
@@ -12,6 +13,7 @@ import com.easycodingnow.utils.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author lihao
@@ -32,7 +34,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
         //解析请求参数
         requestParams = parseRequestParams();
 
-        //机器返回数据描述
+        //解析返回数据描述
         returnDesc = parseReturnDesc();
 
         //解析返回数据类型
@@ -100,9 +102,18 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
 
     private boolean skipMethodParam(MethodParam methodParam, Comment.Tag tag){
         if("HttpServletResponse".equals(methodParam.getType()) ||
-                "HttpServletRequest".equals(methodParam.getType()) ){
+                "HttpServletRequest".equals(methodParam.getType())){
             return true;
         }
+
+        List<String> ignoreAnnotations = GenConfig.getGenConfig().getIgnoreApiAnnotationParam();
+        if(!CollectionUtils.isEmpty(ignoreAnnotations) && !CollectionUtils.isEmpty(methodParam.getAnnotations())){
+            List<String> annotations = methodParam.getAnnotations().stream().map((Annotation::getName)).collect(Collectors.toList());
+            if(ignoreAnnotations.retainAll(annotations)){
+                return true;
+            }
+        }
+
 
         //other skip condition
         if(tag != null && StringUtils.isNotEmpty(tag.getContent()) && tag.getContent().contains("#ignore#")){

@@ -3,6 +3,7 @@ package com.easycodingnow.template.vo;
 import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.utils.CollectionUtils;
+import com.easycodingnow.utils.StringUtils;
 import jdk.nashorn.internal.objects.annotations.Getter;
 
 import java.util.ArrayList;
@@ -63,7 +64,19 @@ public class DocPojoClass {
                 }
 
                 docField.setName(name);
-                docField.setDesc(field.getComment()!=null?field.getComment().getDescription():"");
+                //兼容swagger 优先返回swagger
+                Annotation annotation = field.getAnnotationByName("ApiModelProperty");
+                if(annotation != null){
+                    if(NormalAnnotation.class.isInstance(annotation)){
+                        NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
+                        docField.setDesc(normalAnnotation.getValue("value"));
+                        if(StringUtils.isEmpty(docField.getDesc())){
+                            docField.setDesc(normalAnnotation.getValue("notes"));
+                        }
+                    }
+                }else{
+                    docField.setDesc(field.getComment()!=null?field.getComment().getDescription():"");
+                }
                 docField.setType(field.getType());
                 this.fields.add(docField);
             }

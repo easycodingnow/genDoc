@@ -15,16 +15,32 @@ import java.util.List;
 public class GenConfig {
     private static final Log logger = LogFactory.getLog(GenConfig.class);
 
+    private static GenConfig genConfig = new GenConfig();
 
     private List<String> scanPackages;
 
     private List<String> sourcePathRoot;
+
+    public List<String> getIgnoreApiAnnotationParam() {
+        return ignoreApiAnnotationParam;
+    }
+
+    public void setIgnoreApiAnnotationParam(List<String> ignoreApiAnnotationParam) {
+        this.ignoreApiAnnotationParam = ignoreApiAnnotationParam;
+    }
+
+    private List<String> ignoreApiAnnotationParam;
 
     private String outputPath;
 
     private WebType webType = WebType.SPRING_MVC;
 
     private OutPutType outPutType = OutPutType.HTML;
+
+
+    public static GenConfig getGenConfig(){
+        return genConfig;
+    }
 
 
     //校验配置是否合法

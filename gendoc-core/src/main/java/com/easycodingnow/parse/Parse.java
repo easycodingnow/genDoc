@@ -4,11 +4,15 @@ import com.easycodingnow.reflect.Class;
 import com.easycodingnow.reflect.Field;
 import com.easycodingnow.reflect.Method;
 import com.easycodingnow.reflect.MethodParam;
+import com.easycodingnow.utils.CollectionUtils;
+import com.easycodingnow.utils.StringUtils;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.*;
+import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -54,6 +59,7 @@ public class Parse {
 
     private static Class innerParse(CompilationUnit cu, final List<String> sourceRoot){
         final Class cls = new Class();
+        final HashMap<String , Class> clsMap = new HashMap(); //类名称和类的映射关系
 
         cu.accept(new VoidVisitorAdapter<Void>(){
 
@@ -64,11 +70,38 @@ public class Parse {
 
             //解析类
             public void visit(ClassOrInterfaceDeclaration n, Void arg) {
-                cls.setName(n.getNameAsString());
-                cls.setComment(ParseHelper.parseComment(n));
-                cls.setAnnotations(ParseHelper.parseAnnotation(n, cls));
-                cls.setModifier(ParseHelper.parseModifiers(n));
-                cls.setSourceRoot(sourceRoot);
+                Node parentNode = n.getParentNode().get();
+
+                if(parentNode instanceof ClassOrInterfaceDeclaration){
+                    ClassOrInterfaceDeclaration parentNodeClass = (ClassOrInterfaceDeclaration) parentNode;
+                    //内部类
+                    Class innerCls = new Class();
+                    Class parentCls = clsMap.get(parentNodeClass.getNameAsString());
+                    innerCls.setName(parentNodeClass.getNameAsString());
+                    innerCls.setComment(ParseHelper.parseComment(parentNodeClass));
+                    innerCls.setAnnotations(ParseHelper.parseAnnotation(parentNodeClass, innerCls));
+                    innerCls.setModifier(ParseHelper.parseModifiers(parentNodeClass));
+                    innerCls.setSourceRoot(sourceRoot);
+                    innerCls.setPackageName(parentCls.getPackageName());
+
+                    List<Class> innerClassList =  parentCls.getInnerClass();
+                    if(innerClassList == null){
+                        innerClassList = new ArrayList<>();
+                        parentCls.setInnerClass(innerClassList);
+                    }
+                    innerClassList.add(innerCls);
+                    clsMap.put(n.getNameAsString(), innerCls);
+                }else{
+                    //最外层的cls
+                    cls.setName(n.getNameAsString());
+                    cls.setComment(ParseHelper.parseComment(n));
+                    cls.setAnnotations(ParseHelper.parseAnnotation(n, cls));
+                    cls.setModifier(ParseHelper.parseModifiers(n));
+                    cls.setSourceRoot(sourceRoot);
+                    clsMap.put(n.getNameAsString(), cls);
+                }
+
+
                 super.visit(n, arg);
             }
 
@@ -77,6 +110,10 @@ public class Parse {
                 NodeList<VariableDeclarator> nodeList =  n.getVariables();
 
                 if(nodeList != null && nodeList.size() > 0){
+                    ClassOrInterfaceDeclaration parentCls = (ClassOrInterfaceDeclaration) n.getParentNode().get();
+                    Class fieldClass = clsMap.get(parentCls.getNameAsString());
+
+
                     Field field = new Field();
                     VariableDeclarator variableDeclarator = nodeList.get(0);
                     field.setName(variableDeclarator.getNameAsString());
@@ -84,13 +121,13 @@ public class Parse {
                     field.setComment(ParseHelper.parseComment(n));
                     field.setAnnotations(ParseHelper.parseAnnotation(n, field));
                     field.setModifier(ParseHelper.parseModifiers(n));
-                    field.setParentMember(cls);
+                    field.setParentMember(fieldClass);
 
                     if(!field.ignore()){
-                        List<Field> fields = cls.getFields();
+                        List<Field> fields = fieldClass.getFields();
                         if(fields == null){
                             fields = new ArrayList<Field>();
-                            cls.setFields(fields);
+                            fieldClass.setFields(fields);
                         }
                         fields.add(field);
                     }
@@ -102,14 +139,16 @@ public class Parse {
 
             //解析方法
             public void visit(MethodDeclaration n, Void arg) {
-                Method method = new Method();
+                ClassOrInterfaceDeclaration parentCls = (ClassOrInterfaceDeclaration) n.getParentNode().get();
+                Class fieldClass = clsMap.get(parentCls.getNameAsString());
 
+                Method method = new Method();
                 method.setName(n.getNameAsString());
                 method.setType(n.getTypeAsString());
                 method.setComment(ParseHelper.parseComment(n));
                 method.setAnnotations(ParseHelper.parseAnnotation(n, method));
                 method.setModifier(ParseHelper.parseModifiers(n));
-                method.setParentMember(cls);
+                method.setParentMember(fieldClass);
 
                 NodeList<Parameter> nodeList = n.getParameters();
                 if(nodeList !=null && nodeList.size() > 0){
@@ -126,10 +165,10 @@ public class Parse {
                 }
 
                 if(!method.ignore()){
-                    List<Method> methods = cls.getMethods();
+                    List<Method> methods = fieldClass.getMethods();
                     if(methods == null){
                         methods = new ArrayList<Method>();
-                        cls.setMethods(methods);
+                        fieldClass.setMethods(methods);
                     }
                     methods.add(method);
                 }

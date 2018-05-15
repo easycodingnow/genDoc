@@ -50,10 +50,26 @@ public abstract class SpringMvcApiMember implements DocApiMember {
     }
 
     private String parseApiName(){
+        Annotation annotation = member.getAnnotationByName("ApiOperation");
+        if(annotation != null){
+            if(NormalAnnotation.class.isInstance(annotation)){
+                NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
+                return normalAnnotation.getValue("value");
+            }
+        }
         return member.getCommentName();
     }
 
     private String parseApiDescription(){
+        //兼容swagger 优先返回swagger
+        Annotation annotation = member.getAnnotationByName("ApiOperation");
+        if(annotation != null){
+            if(NormalAnnotation.class.isInstance(annotation)){
+                NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
+                return normalAnnotation.getValue("value");
+            }
+        }
+
         return member.getCommentDesc();
     }
 
@@ -75,22 +91,35 @@ public abstract class SpringMvcApiMember implements DocApiMember {
 
     private String parseRequestPath(){
         Annotation annotation = member.getAnnotationByName("RequestMapping");
+        String path = "";
         if(annotation != null){
-            if(MarkerAnnotation.class.isInstance(annotation)){
-                return "";
-            }else if(SingleAnnotation.class.isInstance(annotation)){
-                return ((SingleAnnotation)annotation).getValue();
+            if(SingleAnnotation.class.isInstance(annotation)){
+                path  = ((SingleAnnotation)annotation).getValue();
             }else if(NormalAnnotation.class.isInstance(annotation)){
                 NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
-                String path = normalAnnotation.getValue("value");
+                path = normalAnnotation.getValue("value");
 
                 if(path == null){
                     path = normalAnnotation.getValue("path");
                 }
-                return path;
+                if(path.contains("\"")){
+                    path = path.substring(1);
+                    path = path.substring(0, path.length()-1);
+                    path = path.replace("\"","").trim();
+                    if(path.contains(",")){
+                        //说明有多个
+                        path = "["+path+"]";
+                    }
+                }
+
             }
         }
-        return "";
+
+        if(path.endsWith("/")){
+            path = path.substring(0, path.length()-1);
+        }
+
+        return path;
     }
 
 
