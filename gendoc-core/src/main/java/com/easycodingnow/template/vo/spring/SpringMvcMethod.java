@@ -109,8 +109,10 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
         List<String> ignoreAnnotations = GenConfig.getGenConfig().getIgnoreApiAnnotationParam();
         if(!CollectionUtils.isEmpty(ignoreAnnotations) && !CollectionUtils.isEmpty(methodParam.getAnnotations())){
             List<String> annotations = methodParam.getAnnotations().stream().map((Annotation::getName)).collect(Collectors.toList());
-            if(ignoreAnnotations.retainAll(annotations)){
-                return true;
+            for(String ignoreAnnotation:ignoreAnnotations){
+                if(annotations.contains(ignoreAnnotation)){
+                    return true;
+                }
             }
         }
 
