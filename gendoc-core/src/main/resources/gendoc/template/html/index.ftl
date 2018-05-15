@@ -428,7 +428,7 @@
         }
 
         $("#method-url").text(cls['requestPath'] + methodPath);
-        $("#method-way").text(cls['requestMethod']);
+        $("#method-way").text(method['requestMethod']);
 
         $("#method-params tbody").empty();
 

@@ -2,7 +2,12 @@ package com.easycodingnow.template.vo.spring;
 
 import com.easycodingnow.reflect.*;
 import com.easycodingnow.template.vo.DocApiMember;
+import com.easycodingnow.template.vo.DocRequestParam;
+import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author lihao
@@ -30,12 +35,18 @@ public abstract class SpringMvcApiMember implements DocApiMember {
         //解析描述
         apiDescription = parseApiDescription();
 
-        //解析请求方法
-        requestMethod = parseRequestMethod();
+        //解析请求类型
+        String requestType = parseRequestType();
+
+        if("json".equals(requestType)){
+            requestMethod = "POST(application/json)";
+        }else{
+            //解析请求方法
+            requestMethod = parseRequestMethod();
+        }
 
         //解析请求地址
         requestPath = parseRequestPath();
-
 
         if(StringUtils.isEmpty(apiName)){
             //如果名称不存在，则进行兼容，尝试获取请求地址名称，如果没有设置则获取类名或者方法名作为名称
@@ -73,6 +84,19 @@ public abstract class SpringMvcApiMember implements DocApiMember {
         return member.getCommentDesc();
     }
 
+    private String parseRequestType(){
+        if(member instanceof  Method){
+            List<MethodParam> params = ((Method)member).getParams();
+            if(!CollectionUtils.isEmpty(params)) {
+                for (MethodParam methodParam : params) {
+                    if(methodParam.getAnnotationByName("RequestBody") != null){
+                        return "json";
+                    }
+                }
+            }
+        }
+        return "form";
+    }
 
     private String parseRequestMethod(){
 
