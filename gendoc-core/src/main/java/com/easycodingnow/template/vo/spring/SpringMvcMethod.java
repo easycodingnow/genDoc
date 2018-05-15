@@ -117,6 +117,15 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
         }
 
 
+        List<String> ignoreTypeParam = GenConfig.getGenConfig().getIgnoreApiTypeParam();
+        if(!CollectionUtils.isEmpty(ignoreTypeParam)){
+            if(ignoreTypeParam.contains(methodParam.getType())){
+                return true;
+            }
+        }
+
+
+
         //other skip condition
         if(tag != null && StringUtils.isNotEmpty(tag.getContent()) && tag.getContent().contains("#ignore#")){
             return true;

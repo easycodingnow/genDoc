@@ -70,38 +70,38 @@ public class Parse {
 
             //解析类
             public void visit(ClassOrInterfaceDeclaration n, Void arg) {
-                Node parentNode = n.getParentNode().get();
 
-                if(parentNode instanceof ClassOrInterfaceDeclaration){
-                    ClassOrInterfaceDeclaration parentNodeClass = (ClassOrInterfaceDeclaration) parentNode;
-                    //内部类
-                    Class innerCls = new Class();
-                    Class parentCls = clsMap.get(parentNodeClass.getNameAsString());
-                    innerCls.setName(parentNodeClass.getNameAsString());
-                    innerCls.setComment(ParseHelper.parseComment(parentNodeClass));
-                    innerCls.setAnnotations(ParseHelper.parseAnnotation(parentNodeClass, innerCls));
-                    innerCls.setModifier(ParseHelper.parseModifiers(parentNodeClass));
-                    innerCls.setSourceRoot(sourceRoot);
-                    innerCls.setPackageName(parentCls.getPackageName());
+                if(n.getParentNode().isPresent()){
+                    if(n.getParentNode().get() instanceof  ClassOrInterfaceDeclaration){
+                        ClassOrInterfaceDeclaration parentNodeClass = (ClassOrInterfaceDeclaration) n.getParentNode().get();
+                        //内部类
+                        Class innerCls = new Class();
+                        Class parentCls = clsMap.get(parentNodeClass.getNameAsString());
+                        innerCls.setName(parentNodeClass.getNameAsString());
+                        innerCls.setComment(ParseHelper.parseComment(parentNodeClass));
+                        innerCls.setAnnotations(ParseHelper.parseAnnotation(parentNodeClass, innerCls));
+                        innerCls.setModifier(ParseHelper.parseModifiers(parentNodeClass));
+                        innerCls.setSourceRoot(sourceRoot);
+                        innerCls.setPackageName(parentCls.getPackageName());
 
-                    List<Class> innerClassList =  parentCls.getInnerClass();
-                    if(innerClassList == null){
-                        innerClassList = new ArrayList<>();
-                        parentCls.setInnerClass(innerClassList);
+                        List<Class> innerClassList =  parentCls.getInnerClass();
+                        if(innerClassList == null){
+                            innerClassList = new ArrayList<>();
+                            parentCls.setInnerClass(innerClassList);
+                        }
+                        innerClassList.add(innerCls);
+                        clsMap.put(n.getNameAsString(), innerCls);
+                    }else{
+                        //最外层的cls
+                        cls.setName(n.getNameAsString());
+                        cls.setComment(ParseHelper.parseComment(n));
+                        cls.setAnnotations(ParseHelper.parseAnnotation(n, cls));
+                        cls.setModifier(ParseHelper.parseModifiers(n));
+                        cls.setSourceRoot(sourceRoot);
+                        clsMap.put(n.getNameAsString(), cls);
                     }
-                    innerClassList.add(innerCls);
-                    clsMap.put(n.getNameAsString(), innerCls);
-                }else{
-                    //最外层的cls
-                    cls.setName(n.getNameAsString());
-                    cls.setComment(ParseHelper.parseComment(n));
-                    cls.setAnnotations(ParseHelper.parseAnnotation(n, cls));
-                    cls.setModifier(ParseHelper.parseModifiers(n));
-                    cls.setSourceRoot(sourceRoot);
-                    clsMap.put(n.getNameAsString(), cls);
+
                 }
-
-
                 super.visit(n, arg);
             }
 
@@ -139,38 +139,40 @@ public class Parse {
 
             //解析方法
             public void visit(MethodDeclaration n, Void arg) {
-                ClassOrInterfaceDeclaration parentCls = (ClassOrInterfaceDeclaration) n.getParentNode().get();
-                Class fieldClass = clsMap.get(parentCls.getNameAsString());
+                if(n.getParentNode().isPresent() && n.getParentNode().get() instanceof ClassOrInterfaceDeclaration){
+                    ClassOrInterfaceDeclaration parentCls = (ClassOrInterfaceDeclaration) n.getParentNode().get();
+                    Class fieldClass = clsMap.get(parentCls.getNameAsString());
 
-                Method method = new Method();
-                method.setName(n.getNameAsString());
-                method.setType(n.getTypeAsString());
-                method.setComment(ParseHelper.parseComment(n));
-                method.setAnnotations(ParseHelper.parseAnnotation(n, method));
-                method.setModifier(ParseHelper.parseModifiers(n));
-                method.setParentMember(fieldClass);
+                    Method method = new Method();
+                    method.setName(n.getNameAsString());
+                    method.setType(n.getTypeAsString());
+                    method.setComment(ParseHelper.parseComment(n));
+                    method.setAnnotations(ParseHelper.parseAnnotation(n, method));
+                    method.setModifier(ParseHelper.parseModifiers(n));
+                    method.setParentMember(fieldClass);
 
-                NodeList<Parameter> nodeList = n.getParameters();
-                if(nodeList !=null && nodeList.size() > 0){
-                    List<MethodParam> methodParamList = new ArrayList<MethodParam>();
-                    for(Parameter parameter:nodeList){
-                        MethodParam methodParam = new MethodParam();
-                        methodParam.setType(parameter.getTypeAsString());
-                        methodParam.setName(parameter.getNameAsString());
-                        methodParam.setAnnotations(ParseHelper.parseAnnotation(parameter, methodParam));
-                        methodParam.setParentMember(method);
-                        methodParamList.add(methodParam);
+                    NodeList<Parameter> nodeList = n.getParameters();
+                    if(nodeList !=null && nodeList.size() > 0){
+                        List<MethodParam> methodParamList = new ArrayList<MethodParam>();
+                        for(Parameter parameter:nodeList){
+                            MethodParam methodParam = new MethodParam();
+                            methodParam.setType(parameter.getTypeAsString());
+                            methodParam.setName(parameter.getNameAsString());
+                            methodParam.setAnnotations(ParseHelper.parseAnnotation(parameter, methodParam));
+                            methodParam.setParentMember(method);
+                            methodParamList.add(methodParam);
+                        }
+                        method.setParams(methodParamList);
                     }
-                    method.setParams(methodParamList);
-                }
 
-                if(!method.ignore()){
-                    List<Method> methods = fieldClass.getMethods();
-                    if(methods == null){
-                        methods = new ArrayList<Method>();
-                        fieldClass.setMethods(methods);
+                    if(!method.ignore()){
+                        List<Method> methods = fieldClass.getMethods();
+                        if(methods == null){
+                            methods = new ArrayList<Method>();
+                            fieldClass.setMethods(methods);
+                        }
+                        methods.add(method);
                     }
-                    methods.add(method);
                 }
                 super.visit(n, arg);
             }

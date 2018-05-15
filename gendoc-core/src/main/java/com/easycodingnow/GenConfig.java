@@ -21,15 +21,9 @@ public class GenConfig {
 
     private List<String> sourcePathRoot;
 
-    public List<String> getIgnoreApiAnnotationParam() {
-        return ignoreApiAnnotationParam;
-    }
-
-    public void setIgnoreApiAnnotationParam(List<String> ignoreApiAnnotationParam) {
-        this.ignoreApiAnnotationParam = ignoreApiAnnotationParam;
-    }
-
     private List<String> ignoreApiAnnotationParam;
+
+    private List<String> ignoreApiTypeParam;
 
     private String outputPath;
 
@@ -116,5 +110,22 @@ public class GenConfig {
 
     public void setOutPutType(OutPutType outPutType) {
         this.outPutType = outPutType;
+    }
+
+    public List<String> getIgnoreApiAnnotationParam() {
+        return ignoreApiAnnotationParam;
+    }
+
+    public void setIgnoreApiAnnotationParam(List<String> ignoreApiAnnotationParam) {
+        this.ignoreApiAnnotationParam = ignoreApiAnnotationParam;
+    }
+
+
+    public List<String> getIgnoreApiTypeParam() {
+        return ignoreApiTypeParam;
+    }
+
+    public void setIgnoreApiTypeParam(List<String> ignoreApiTypeParam) {
+        this.ignoreApiTypeParam = ignoreApiTypeParam;
     }
 }
