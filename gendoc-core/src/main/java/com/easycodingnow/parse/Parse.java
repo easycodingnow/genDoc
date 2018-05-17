@@ -77,10 +77,10 @@ public class Parse {
                         //内部类
                         Class innerCls = new Class();
                         Class parentCls = clsMap.get(parentNodeClass.getNameAsString());
-                        innerCls.setName(parentNodeClass.getNameAsString());
-                        innerCls.setComment(ParseHelper.parseComment(parentNodeClass));
-                        innerCls.setAnnotations(ParseHelper.parseAnnotation(parentNodeClass, innerCls));
-                        innerCls.setModifier(ParseHelper.parseModifiers(parentNodeClass));
+                        innerCls.setName(n.getNameAsString());
+                        innerCls.setComment(ParseHelper.parseComment(n));
+                        innerCls.setAnnotations(ParseHelper.parseAnnotation(n, innerCls));
+                        innerCls.setModifier(ParseHelper.parseModifiers(n));
                         innerCls.setSourceRoot(sourceRoot);
                         innerCls.setPackageName(parentCls.getPackageName());
 
@@ -110,28 +110,27 @@ public class Parse {
                 NodeList<VariableDeclarator> nodeList =  n.getVariables();
 
                 if(nodeList != null && nodeList.size() > 0){
-                    ClassOrInterfaceDeclaration parentCls = (ClassOrInterfaceDeclaration) n.getParentNode().get();
-                    Class fieldClass = clsMap.get(parentCls.getNameAsString());
+                    if(n.getParentNode().isPresent() &&  n.getParentNode().get() instanceof ClassOrInterfaceDeclaration){
+                        ClassOrInterfaceDeclaration parentCls = (ClassOrInterfaceDeclaration) n.getParentNode().get();
+                        Class fieldClass = clsMap.get(parentCls.getNameAsString());
+                        Field field = new Field();
+                        VariableDeclarator variableDeclarator = nodeList.get(0);
+                        field.setName(variableDeclarator.getNameAsString());
+                        field.setType(variableDeclarator.getType().asString());
+                        field.setComment(ParseHelper.parseComment(n));
+                        field.setAnnotations(ParseHelper.parseAnnotation(n, field));
+                        field.setModifier(ParseHelper.parseModifiers(n));
+                        field.setParentMember(fieldClass);
 
-
-                    Field field = new Field();
-                    VariableDeclarator variableDeclarator = nodeList.get(0);
-                    field.setName(variableDeclarator.getNameAsString());
-                    field.setType(variableDeclarator.getType().asString());
-                    field.setComment(ParseHelper.parseComment(n));
-                    field.setAnnotations(ParseHelper.parseAnnotation(n, field));
-                    field.setModifier(ParseHelper.parseModifiers(n));
-                    field.setParentMember(fieldClass);
-
-                    if(!field.ignore()){
-                        List<Field> fields = fieldClass.getFields();
-                        if(fields == null){
-                            fields = new ArrayList<Field>();
-                            fieldClass.setFields(fields);
+                        if(!field.ignore()){
+                            List<Field> fields = fieldClass.getFields();
+                            if(fields == null){
+                                fields = new ArrayList<Field>();
+                                fieldClass.setFields(fields);
+                            }
+                            fields.add(field);
                         }
-                        fields.add(field);
                     }
-
                 }
                 super.visit(n, arg);
 

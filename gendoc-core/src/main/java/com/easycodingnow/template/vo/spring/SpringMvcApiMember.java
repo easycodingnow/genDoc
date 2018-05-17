@@ -25,6 +25,12 @@ public abstract class SpringMvcApiMember implements DocApiMember {
 
     private String requestPath;
 
+    public boolean isPostJson() {
+        return isPostJson;
+    }
+
+    private boolean isPostJson; //是否是json提交
+
 
     public SpringMvcApiMember(Member member) {
         this.member = member;
@@ -40,6 +46,7 @@ public abstract class SpringMvcApiMember implements DocApiMember {
 
         if("json".equals(requestType)){
             requestMethod = "POST(application/json)";
+            isPostJson = true;
         }else{
             //解析请求方法
             requestMethod = parseRequestMethod();

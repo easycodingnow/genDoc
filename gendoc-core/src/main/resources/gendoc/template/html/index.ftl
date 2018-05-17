@@ -85,7 +85,7 @@
         }
 
         .main-sidebar {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             height: 100%;
@@ -174,6 +174,18 @@
             left: 27%;
             display: none;
         }
+        .pojo-modal-box{
+            position: fixed;
+            max-height: 400px;
+            overflow-y: scroll;
+            top: 100px;
+            width: 720px;
+            margin:0 auto;
+            z-index: 1000;
+            background-color: white;
+            left: 27%;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -218,18 +230,7 @@
             <p><strong>参数：</strong></p>
             <div style="width: 100%;overflow-x: auto;">
                 <table id="method-params">
-                    <thead>
-                    <tr style="background-color: rgb(64, 158, 255); color: rgb(255, 255, 255);">
-                        <th style="text-align: left; width: 180px;">参数名</th>
-                        <th style="text-align: left; width: 180px;">必选</th>
-                        <th style="text-align: left; width: 180px;">类型</th>
-                        <th style="text-align: left; width: 180px;">默认值</th>
-                        <th style="width: 180px;">说明</th>
-                    </tr>
-                    </thead>
-                    <tbody>
 
-                    </tbody>
                 </table>
             </div>
             <div id="returnBox">
@@ -244,16 +245,13 @@
 
 </div>
 <section class="modal-box">
-    <div class="param-tables" style="padding: 10px">
-
-    </div>
 
 </section>
-<div class="msg-layer-bg" onclick="hideRequestModal()"></div>
-
+<div class="msg-layer-bg" onclick="hideModal()"></div>
 
 <script>
     var filterStr = "";
+    var modalIdStack = [];
 
     var menuTmep = '<li class="treeview">' +
             '<a onclick="menuClick(this)" data-index="{{class_index}}" href="#" class="apiClass">' +
@@ -286,6 +284,19 @@
             '</table>'+
             '</div>';
 
+    var requestParamTable =   '<thead>'+
+    '<tr style="background-color: rgb(64, 158, 255); color: rgb(255, 255, 255);">'+
+            '<th style="text-align: left; width: 180px;">参数名</th>'+
+            '<th style="text-align: left; width: 180px;">必选</th>'+
+            '<th style="text-align: left; width: 180px;">类型</th>'+
+            '<th style="text-align: left; width: 180px;">默认值</th>'+
+            '<th style="width: 180px;">说明</th>'+
+            '</tr>'+
+            '</thead>'+
+            '<tbody>'+
+            '{{tr}}'+
+            '</tbody>';
+
     var requestParamTrTemp = '<tr style="background-color: rgb(255, 255, 255);">'
             + '<td style="text-align:left;">{{name}}</td>'
             + '<td style="text-align:left;">{{required}}</td>'
@@ -316,48 +327,78 @@
             + '<td style="text-align:left;">{{type}}</td>'
             + '<td style="text-align:left;">{{desc}}</td></tr>';
 
+    var pojoTableTemp =  '<ul>'+
+            '<li>{{pojoClassType}}</li>'+
+            '</ul>'+
+            '<div style="width: 100%;overflow-x: auto;">'+'<table>'+
+            '<thead>'+
+            '<tr style="background-color: rgb(64, 158, 255); color: rgb(255, 255, 255);">'+
+            '<th style="text-align: left; width: 180px;">参数名</th>'+
+            '<th style="text-align: left; width: 180px;">类型</th>'+
+            '<th style="width: 180px;">说明</th>'+
+            '</tr>'+
+            '</thead>'+
+            '<tbody>{{tr}}'+
+            '</tbody>'+
+            '</table>'+
+            '</div>';
 
-    function hideRequestModal() {
-        $(".modal-box").hide();
-        $(".msg-layer-bg").hide();
-    }
+    var pojoTrTemp =  '<tr style="background-color: rgb(255, 255, 255);">'
+            + '<td style="text-align:left;">{{name}}</td>'
+            + '<td style="text-align:left;">{{type}}</td>'
+            + '<td style="text-align:left;">{{desc}}</td></tr>';
 
-    function showRequestModal() {
-        $(".modal-box").show();
+    function showModal(id) {
+        if(modalIdStack.length > 0){
+            $("#"+modalIdStack[modalIdStack.length - 1]).hide();
+        }
+        $("#"+id).show();
         $(".msg-layer-bg").show();
+        modalIdStack.push(id);
+    }
+
+    function hideModal() {
+        $("#"+modalIdStack.pop()).remove();
+        if(modalIdStack.length === 0){
+            $(".msg-layer-bg").hide();
+        }else{
+            $("#"+modalIdStack[modalIdStack.length - 1]).show();
+        }
     }
 
 
-    //请求参数的模态框
-    function requestModal(index, paramIndex) {
-        var indexArr = index.split(",");
-        var method = apiJson[indexArr[0]]['methods'][indexArr[1]];
-        var param = method['requestParams'][paramIndex];
+    var pojoClassMap = {};
+    function pojoClassModal(className) {
 
-        var tableHtml = "";
-        for(var i=0; i<param['typeDoc'].length; i++){
+        var pojoClass = pojoClassMap[className];
+        var pojoTableHtml = "";
+        var tableTrHtml = "";
 
-
-            var tableTrHtml = "";
-
-            for(var j=0; j<param['typeDoc'][i]['fields'].length; j++){
-                var requestParam = param['typeDoc'][i]['fields'][j];
-
-                tableTrHtml += requestParamTrTemp.replace("{{name}}", requestParam['name'] ? requestParam['name'] : "")
-                        .replace("{{required}}", "")
-                        .replace("{{type}}", requestParam['type'] ? requestParam['type'] : "")
-                        .replace("{{defaultValue}}", requestParam["defaultValue"]?requestParam["defaultValue"]:"")
-                        .replace("{{desc}}", requestParam['desc'] ? requestParam['desc'] : "");
+        for(var i=0; i<pojoClass['fields'].length; i++){
+            var field = pojoClass['fields'][i];
+            var typeHtml = replaceHmtlStr(field['type'] ? field['type'] : "");
+            if(field['typeDoc']){
+                var fullType = field['typeDoc'][0]['fullType'];
+                pojoClassMap[fullType] = field['typeDoc'][0];
+                typeHtml = "<a style=\"cursor: pointer;color: #409eff\" onclick=\"pojoClassModal('"+fullType+"')\">"
+                        +typeHtml+"</a>"
             }
-            tableHtml += requestTableTemp
-                    .replace("{{requestType}}", param['typeDoc'][i]['type'])
-                    .replace("{{tr}}", tableTrHtml);
+            tableTrHtml += pojoTrTemp.replace("{{name}}", field['name'] ? field['name'] : "")
+                    .replace("{{type}}", typeHtml)
+                    .replace("{{desc}}", field['desc'] ? field['desc'] : "");
         }
 
-        $(".param-tables").empty().html(tableHtml);
-        showRequestModal();
+        pojoTableHtml += pojoTableTemp
+                .replace("{{tr}}", tableTrHtml).replace("{{pojoClassType}}", pojoClass['type']);
+        var modalId ="pojo-modal-box"+new Date().getTime();
+        var modalHtml ='<section id='+modalId+' class="pojo-modal-box">'+
+                '<div class="pojo-param-tables" style="padding: 10px">'+
+                '{{table}}'+
+                '</div>'+
+                '</section>';
+        $("body").append(modalHtml.replace("{{table}}",pojoTableHtml));
+        showModal(modalId)
     }
-
 
 
     function initMenu() {
@@ -378,7 +419,6 @@
                     requestPath = "/" + requestPath;
                 }
                 requestPath = apiJson[i]['requestPath']+requestPath;
-                console.info(requestPath);
                 if (!filterStr || methodName.search(filterStr) !== -1
                         || requestPath.search(filterStr) !== -1) {
                     methods[j]['originIndex'] = j;
@@ -410,6 +450,10 @@
         }
     });
 
+    function replaceHmtlStr(content) {
+        return content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
     function apiMethodClick(that) {
         $("a").removeClass("active");
         $(that).addClass("active");
@@ -435,22 +479,57 @@
 
         if (method['requestParams']) {
             var paramsHtml = "";
-            for (var i = 0; i < method['requestParams'].length; i++) {
-                var requestParam = method['requestParams'][i];
-
-                var typeHtml = requestParam['type'] ? requestParam['type'] : "";
-                if(requestParam['typeDoc']){
-                    typeHtml = "<a style=\"cursor: pointer;color: #409eff\" onclick=\"requestModal('"+indexStr+"',"+i+")\">"
-                    +typeHtml+"</a>"
+            if(method['postJson']){
+                var param = method['requestParams'][0];
+                if(param['typeDoc'] && param['typeDoc'].length > 0) {
+                    for (var i = 0; i < param['typeDoc'].length; i++) {
+                        var tableTrHtml = "";
+                        for (var j = 0; j < param['typeDoc'][i]['fields'].length; j++) {
+                            var requestParam = param['typeDoc'][i]['fields'][j];
+                            var typeHtml = replaceHmtlStr(requestParam['type'] ? requestParam['type'] : "");
+                            if(requestParam['typeDoc']){
+                                var fullType = requestParam['typeDoc'][0]['fullType'];
+                                pojoClassMap[fullType] = requestParam['typeDoc'][0];
+                                typeHtml = "<a style=\"cursor: pointer;color: #409eff\" onclick=\"pojoClassModal('"+fullType+"')\">"
+                                        +typeHtml+"</a>"
+                            }
+                            tableTrHtml += requestParamTrTemp.replace("{{name}}", requestParam['name'] ? requestParam['name'] : "")
+                                    .replace("{{required}}", "")
+                                    .replace("{{type}}", typeHtml)
+                                    .replace("{{defaultValue}}", requestParam["defaultValue"] ? requestParam["defaultValue"] : "")
+                                    .replace("{{desc}}", requestParam['desc'] ? requestParam['desc'] : "");
+                        }
+                        paramsHtml += requestTableTemp
+                                .replace("{{requestType}}", param['typeDoc'][i]['type'])
+                                .replace("{{tr}}", tableTrHtml);
+                    }
+                }else{
+                    paramsHtml += requestParamTrTemp.replace("{{name}}", param['name'] ? param['name'] : "")
+                            .replace("{{required}}", "")
+                            .replace("{{type}}", replaceHmtlStr(param['type'] ? param['type'] : ""))
+                            .replace("{{defaultValue}}", param["defaultValue"] ? param["defaultValue"] : "")
+                            .replace("{{desc}}", param['description'] ? param['description'] : "");
                 }
-                paramsHtml +=requestParamTrTemp.replace("{{name}}", requestParam['name'] ? requestParam['name'] : "")
-                        .replace("{{required}}", requestParam['required'] ? "是" : "否")
-                        .replace("{{type}}", typeHtml)
-                        .replace("{{defaultValue}}", requestParam["defaultValue"]?requestParam["defaultValue"]:"")
-                        .replace("{{desc}}", requestParam['description'] ? requestParam['description'] : "");
-            }
 
-            $("#method-params tbody").html(paramsHtml);
+            }else{
+                for (var i = 0; i < method['requestParams'].length; i++) {
+                    var requestParam = method['requestParams'][i];
+
+                    var typeHtml = replaceHmtlStr(requestParam['type'] ? requestParam['type'] : "");
+                    if(requestParam['typeDoc']){
+                        var fullType = requestParam['typeDoc'][0]['fullType'];
+                        pojoClassMap[fullType] = requestParam['typeDoc'][0];
+                        typeHtml = "<a style=\"cursor: pointer;color: #409eff\" onclick=\"pojoClassModal('"+fullType+"')\">"
+                                +typeHtml+"</a>"
+                    }
+                    paramsHtml +=requestParamTrTemp.replace("{{name}}", requestParam['name'] ? requestParam['name'] : "")
+                            .replace("{{required}}", requestParam['required'] ? "是" : "否")
+                            .replace("{{type}}", typeHtml)
+                            .replace("{{defaultValue}}", requestParam["defaultValue"]?requestParam["defaultValue"]:"")
+                            .replace("{{desc}}", requestParam['description'] ? requestParam['description'] : "");
+                }
+            }
+            $("#method-params").empty().html(requestParamTable.replace("{{tr}}",paramsHtml));
         }
 
 
@@ -464,8 +543,16 @@
                 for (var i = 0; i < fields.length; i++) {
                     var fd = fields[i];
 
+                    var typeHtml = replaceHmtlStr(fd['type'] ? fd['type'] : "");
+                    if(fd['typeDoc']){
+                        var fullType = fd['typeDoc'][0]['fullType'];
+                        pojoClassMap[fullType] = fd['typeDoc'][0];
+                        typeHtml = "<a style=\"cursor: pointer;color: #409eff\" onclick=\"pojoClassModal('"+fullType+"')\">"
+                                +typeHtml+"</a>"
+                    }
+
                     returnHtml +=returnTrTemp.replace("{{name}}", fd['name'] ? fd['name'] : "")
-                            .replace("{{type}}", fd['type'] ? fd['type'] : "")
+                            .replace("{{type}}", typeHtml)
                             .replace("{{desc}}", fd['desc'] ? fd['desc'] : "");
                 }
                 var returnTypeStr =     returnType['type'] + (returnType['desc']?("("+returnType['desc']+")"):"");

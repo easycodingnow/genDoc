@@ -1,5 +1,6 @@
 package com.easycodingnow.template.vo;
 
+import com.easycodingnow.parse.Parse;
 import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.utils.CollectionUtils;
@@ -8,6 +9,7 @@ import jdk.nashorn.internal.objects.annotations.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author lihao
@@ -20,6 +22,10 @@ public class DocPojoClass {
 
     private String type;
 
+
+
+    private String fullType;
+
     private String desc;
 
 
@@ -27,6 +33,7 @@ public class DocPojoClass {
         this.cls = cls;
 
         this.type = cls.getName();
+        this.fullType = cls.getPackageName()+"."+cls.getName();
         this.desc = cls.getCommentName();
 
         List<Field> fields = cls.getFields();
@@ -36,12 +43,22 @@ public class DocPojoClass {
                 DocField docField = new DocField();
                 String name = field.getName();
 
+                if(field.getModifier().contains("static")){
+                    //过滤类变量
+                    continue;
+                }
+
+
                 Annotation jsonFieldAt = field.getAnnotationByName("JSONField");
                 if(jsonFieldAt != null){
                     if(jsonFieldAt instanceof SingleAnnotation){
                         name = ((SingleAnnotation) jsonFieldAt).getValue();
                     }else if(jsonFieldAt instanceof NormalAnnotation){
                         name = ((NormalAnnotation) jsonFieldAt).getValue("name");
+                        String serialize = ((NormalAnnotation) jsonFieldAt).getValue("serialize");
+                        if("false".equals(serialize)){
+                            continue;
+                        }
                     }
                 }
 
@@ -78,6 +95,44 @@ public class DocPojoClass {
                     docField.setDesc(field.getComment()!=null?field.getComment().getDescription():"");
                 }
                 docField.setType(field.getType());
+
+                if(field.getComment() != null){
+                    Map<String, String> metaMap =  field.getComment().getMetaData();
+                    if(metaMap != null && metaMap.containsKey("type")){
+                        //注释中包含参数文档类型，进行参数文档的解析
+                        List<DocPojoClass> docPojoClassList = new ArrayList<DocPojoClass>();
+                        String[] paramTypes = metaMap.get("type").split(",");
+                        for(String paramType:paramTypes){
+                            paramType = paramType.trim();
+                            Class paramClass = null;
+                            if(paramType.contains("$")){
+                                //内部类
+                                String[] classArr = paramType.split("\\$");
+                                if(classArr.length == 2){
+                                    String publicClass = classArr[0];
+                                    String innerClassName = classArr[1];
+                                    Class pCls = Parse.parse(publicClass.trim(), cls.getSourceRoot());
+                                    if(pCls !=null && !CollectionUtils.isEmpty(pCls.getInnerClass())){
+                                        for(Class innerCls:pCls.getInnerClass()){
+                                            if(innerClassName.equals(innerCls.getName())){
+                                                paramClass = innerCls;
+                                            }
+                                        }
+                                    }
+                                }
+                            }else{
+                                paramClass = Parse.parse(paramType.trim(), cls.getSourceRoot());
+                            }
+
+                            if(paramClass != null){
+                                docPojoClassList.add(new DocPojoClass(paramClass));
+                            }
+                        }
+                        docField.setTypeDoc(docPojoClassList);
+                    }
+                }
+
+
                 this.fields.add(docField);
             }
         }
@@ -114,5 +169,13 @@ public class DocPojoClass {
 
     public void setDesc(String desc) {
         this.desc = desc;
+    }
+
+    public String getFullType() {
+        return fullType;
+    }
+
+    public void setFullType(String fullType) {
+        this.fullType = fullType;
     }
 }
