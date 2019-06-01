@@ -48,8 +48,8 @@ Help you to generate API documents
 
 # 配置需要忽略解析的参数
 * 有的时候，一些方法参数不是具体的入参对象，不希望被解析到，可以在解析配置里面配置要忽略的参数
-GenConfig.ignoreApiAnnotationParam  如果参数有ignoreApiAnnotationParam里面的注解就会被忽略
-GenConfig.ignoreApiTypeParam  如果参数类型在ignoreApiTypeParam配置的列表里面就会被忽略
+* GenConfig.ignoreApiAnnotationParam  如果参数有ignoreApiAnnotationParam里面的注解就会被忽略
+* GenConfig.ignoreApiTypeParam  如果参数类型在ignoreApiTypeParam配置的列表里面就会被忽略
 
 
 
