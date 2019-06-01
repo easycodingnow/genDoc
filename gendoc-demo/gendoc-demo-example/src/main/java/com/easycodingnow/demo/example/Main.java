@@ -29,8 +29,8 @@ public class Main {
      */
     private static void genDoc(){
 
-        String sourcePath = "/Users/lihao/Desktop/java/genDoc/gendoc-demo";
-        String outPath = "/Users/lihao/Desktop/java/genDoc/gendoc-demo/gendoc-demo-example/src/main/resources/gendoc/out/html";
+        String sourcePath = ""; //源代码目录
+        String outPath = ""; //生成的文件输出目录
         GenDoc.gen(sourcePath, outPath);
     }
 }
