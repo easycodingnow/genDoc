@@ -5,8 +5,6 @@ import com.easycodingnow.GenDoc;
 import com.easycodingnow.gendoc.web.GenDocWebApp;
 import com.easycodingnow.gendoc.web.GenWebConfig;
 
-import java.util.Arrays;
-
 /**
  * @author lihao
  * @since 2018/3/22
@@ -32,17 +30,11 @@ public class Main {
     private static void genDoc(){
 
         //项目的根目录
-        String projectRootPath = "/Users/leeco/Desktop/github/gendoc";
+        String projectRootPath = "/Users/lihao/Desktop/java/genDoc/gendoc-demo";
 
         GenConfig genConfig = new GenConfig();
-        genConfig.setOutputPath(projectRootPath+"/gendoc-demo/gendoc-demo-example/src/main/resources/gendoc/out/html");
-        genConfig.setScanPackages(Arrays.asList("com.easycodingnow.demo.web1", "com.easycodingnow.demo.web2"));
-        genConfig.setSourcePathRoot(Arrays.asList(
-                projectRootPath + "/gendoc-demo/gendoc-demo-web1/src/main/java",
-                projectRootPath + "/gendoc-demo/gendoc-demo-domain/src/main/java",
-                projectRootPath + "/gendoc-demo/gendoc-demo-web2/src/main/java"
-        ));
-
+        genConfig.setOutputPath(projectRootPath+"/gendoc-demo-example/src/main/resources/gendoc/out/html");
+        genConfig.setSourcePath(projectRootPath);
         GenDoc.gen(genConfig);
     }
 }

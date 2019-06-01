@@ -11,18 +11,15 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Shop {
 
-    //商店名称
-    @JSONField(name = "shop_name")
-    private String shopName;
+
+    private String shopName;//商店名称
 
 
     //商品数量
-    @JsonProperty("good_nums")
     private Long goodNums;
 
     /**
      * 商店介绍
      */
-    @SerializedName("description")
     private String desc;
 }

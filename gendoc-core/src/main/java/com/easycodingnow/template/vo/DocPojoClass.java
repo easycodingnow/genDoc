@@ -1,11 +1,11 @@
 package com.easycodingnow.template.vo;
 
 import com.easycodingnow.parse.Parse;
-import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
+import com.easycodingnow.reflect.*;
 import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.StringUtils;
-import jdk.nashorn.internal.objects.annotations.Getter;
+import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class DocPojoClass {
                 DocField docField = new DocField();
                 String name = field.getName();
 
-                if(field.getModifier().contains("static")){
+                if(!CollectionUtils.isEmpty(field.getModifier()) && field.getModifier().contains("static")){
                     //过滤类变量
                     continue;
                 }
@@ -129,6 +129,14 @@ public class DocPojoClass {
                             }
                         }
                         docField.setTypeDoc(docPojoClassList);
+                    }
+                }
+
+                if (CollectionUtils.isEmpty(docField.getTypeDoc())) {
+                    //尝试字段解析类型
+                    Class paramClass = Parse.autoParse(field.getSourceRoot(), field.getType());
+                    if(paramClass != null){
+                        docField.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
                     }
                 }
 

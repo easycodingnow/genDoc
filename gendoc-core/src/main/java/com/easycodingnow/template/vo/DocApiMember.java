@@ -7,6 +7,8 @@ package com.easycodingnow.template.vo;
 public interface DocApiMember {
      String getApiName();
 
+     String getNeedLogin();
+
      String getApiDescription();
 
      String getRequestMethod();

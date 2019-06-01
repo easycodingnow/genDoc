@@ -1,4 +1,4 @@
-package com.easycodingnow.template.vo.spring;
+package com.easycodingnow.template.vo.rpc;
 
 import com.easycodingnow.reflect.Annotation;
 import com.easycodingnow.reflect.Class;
@@ -13,17 +13,15 @@ import java.util.List;
  * @author lihao
  * @since 2018/3/9
  */
-public class SpringConvertHelper {
+public class RpcApiConvertHelper {
 
-    private static boolean  isSpringAction(Method method){
+    private static boolean  isRpcAction(Method method){
 
         List<Annotation> annotations = method.getAnnotations();
 
         if(annotations != null && annotations.size() > 0){
             for(Annotation annotation:annotations){
-                if(annotation.getName().equals("RequestMapping") ||
-                annotation.getName().endsWith("GetMapping") ||
-                annotation.getName().endsWith("PostMapping")){
+                if(annotation.getName().equals("Api")){
                     return true;
                 }
             }
@@ -31,18 +29,18 @@ public class SpringConvertHelper {
         return false;
     }
 
-    public static SpringMvcApiClass convertToSpringMvcClass(Class cls){
+    public static RpcApiClass convertToRpcApi(Class cls){
         List<DocApiMethod> methodList = new ArrayList<DocApiMethod>();
 
         if(!CollectionUtils.isEmpty(cls.getMethods())){
 
             for(Method method:cls.getMethods()){
-                if(method.isPublic() && isSpringAction(method)){
-                    methodList.add(new SpringMvcMethod(method));
+                if(isRpcAction(method)){
+                    methodList.add(new RpcMethod(method));
                 }
             }
         }
 
-        return new SpringMvcApiClass(methodList, cls);
+        return new RpcApiClass(methodList, cls);
     }
 }

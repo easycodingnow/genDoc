@@ -32,6 +32,11 @@ public abstract class SpringMvcApiMember implements DocApiMember {
     private boolean isPostJson; //是否是json提交
 
 
+    @Override
+    public String getNeedLogin() {
+        return "";
+    }
+
     public SpringMvcApiMember(Member member) {
         this.member = member;
 
@@ -70,7 +75,7 @@ public abstract class SpringMvcApiMember implements DocApiMember {
     private String parseApiName(){
         Annotation annotation = member.getAnnotationByName("ApiOperation");
         if(annotation != null){
-            if(NormalAnnotation.class.isInstance(annotation)){
+            if(annotation instanceof NormalAnnotation){
                 NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
                 return normalAnnotation.getValue("value");
             }
@@ -82,7 +87,7 @@ public abstract class SpringMvcApiMember implements DocApiMember {
         //兼容swagger 优先返回swagger
         Annotation annotation = member.getAnnotationByName("ApiOperation");
         if(annotation != null){
-            if(NormalAnnotation.class.isInstance(annotation)){
+            if(annotation instanceof NormalAnnotation){
                 NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
                 return normalAnnotation.getValue("value");
             }
@@ -106,10 +111,19 @@ public abstract class SpringMvcApiMember implements DocApiMember {
     }
 
     private String parseRequestMethod(){
+        Annotation getAnnotation = member.getAnnotationByName("GetMapping");
+        if (getAnnotation != null) {
+            return "GET";
+        }
+
+        Annotation postAnnotation = member.getAnnotationByName("GetMapping");
+        if (postAnnotation != null) {
+            return "POST";
+        }
 
         Annotation annotation = member.getAnnotationByName("RequestMapping");
         if(annotation != null){
-            if(NormalAnnotation.class.isInstance(annotation)){
+            if(annotation instanceof NormalAnnotation){
                 NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
                 String method = normalAnnotation.getValue("method");
 
@@ -122,11 +136,20 @@ public abstract class SpringMvcApiMember implements DocApiMember {
 
     private String parseRequestPath(){
         Annotation annotation = member.getAnnotationByName("RequestMapping");
+
+        if (annotation == null) {
+            annotation = member.getAnnotationByName("GetMapping");
+        }
+
+        if (annotation == null) {
+            annotation = member.getAnnotationByName("PostMapping");
+        }
+
         String path = "";
         if(annotation != null){
-            if(SingleAnnotation.class.isInstance(annotation)){
+            if(annotation instanceof SingleAnnotation){
                 path  = ((SingleAnnotation)annotation).getValue();
-            }else if(NormalAnnotation.class.isInstance(annotation)){
+            }else if(annotation instanceof NormalAnnotation){
                 NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
                 path = normalAnnotation.getValue("value");
 

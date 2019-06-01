@@ -18,7 +18,7 @@ public class UserController {
     /**
      * 通过用户id获取用户
      * @param id 用户id
-     * @return 用户实体#type:com.easycoding.demo.domain.User#
+     * @return 用户实体
      */
     @RequestMapping("getUserById")
     public Object getUser(@RequestParam(name = "userId") Long id){

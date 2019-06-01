@@ -1,8 +1,11 @@
 package com.easycodingnow.demo.web1;
 
+import com.easycoding.demo.domain.Result;
 import com.easycodingnow.demo.domain.Shop;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -16,25 +19,25 @@ public class ShopController {
 
 
     /**
-     * 获取商店
+     * 获取商店 泛型解析
      * 通过名称获取商店信息
      * @param shopName 商店名称(模糊查询)
      * @param shopNum  商店数量
-     * @return 商品实体#type:com.easycodingnow.demo.domain.Shop,com.easycoding.demo.domain.User#
+     * @return 商品实体
      */
     @RequestMapping("getShop")
-    public Object getShopsV2(String shopName, int shopNum){
+    public Result<Shop> getShopsV2(String shopName, int shopNum){
         return null;
     }
 
 
-    //参数实体的方式，需要标注参数的类型
+    //参数返回值无法通过智能查询找到时，可以通过注释指定 #tyep:...#
     /**
      * 创建商店
-     * @param shop  #type:com.easycodingnow.demo.domain.Shop#
+     * @param shop
      * @return #type:com.easycodingnow.demo.domain.Shop#
      */
-    @RequestMapping("createShop")
+    @PostMapping("createShop")
     public Object createShop(Shop shop){
         return null;
     }
@@ -46,8 +49,8 @@ public class ShopController {
      * @param id 商店id
      * @return 是否成功
      */
-    @RequestMapping("deleteShop/{id}")
-    public Object deleteShop(@PathVariable(name="id") long id){
+    @GetMapping("deleteShop/{id}")
+    public Shop deleteShop(@PathVariable(name="id") long id){
         return null;
     }
 

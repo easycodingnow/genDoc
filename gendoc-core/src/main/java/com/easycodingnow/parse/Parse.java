@@ -5,6 +5,7 @@ import com.easycodingnow.reflect.Field;
 import com.easycodingnow.reflect.Method;
 import com.easycodingnow.reflect.MethodParam;
 import com.easycodingnow.utils.CollectionUtils;
+import com.easycodingnow.utils.FileUtils;
 import com.easycodingnow.utils.StringUtils;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
@@ -32,6 +33,24 @@ import java.util.List;
 public class Parse {
 
     private static final Log logger = LogFactory.getLog(Parse.class);
+
+    public static Class autoParse(List<String> sourceRoot, String type){
+        String genericType = ParseHelper.findGenericType(type);
+        if (ParseHelper.isJavaLangType(genericType)) {
+            return null;
+        }
+        for(String sr:sourceRoot){
+            File file = FileUtils.getJavaFileByFileName(sr,  genericType+ ".java");
+            if(file != null && file.exists() && file.isFile()){
+                try {
+                    return parse(new FileInputStream(file), sourceRoot);
+                } catch (FileNotFoundException e) {
+                    logger.error("file not found!", e);
+                }
+            }
+        }
+        return null;
+    }
 
     public static Class parse(String fullyName, List<String> sourceRoot){
 

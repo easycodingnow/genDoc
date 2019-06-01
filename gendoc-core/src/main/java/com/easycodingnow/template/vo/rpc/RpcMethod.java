@@ -1,9 +1,9 @@
-package com.easycodingnow.template.vo.spring;
+package com.easycodingnow.template.vo.rpc;
 
 import com.easycodingnow.GenConfig;
 import com.easycodingnow.parse.Parse;
-import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
+import com.easycodingnow.reflect.*;
 import com.easycodingnow.template.vo.DocApiMethod;
 import com.easycodingnow.template.vo.DocPojoClass;
 import com.easycodingnow.template.vo.DocRequestParam;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * @author lihao
  * @since 2018/3/9
  */
-public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod {
+public class RpcMethod extends RpcApiMember implements DocApiMethod {
 
     private List<DocRequestParam> requestParams;
 
@@ -30,7 +30,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
     private List<DocPojoClass> returnTypes;
 
 
-    public SpringMvcMethod(Method member) {
+    public RpcMethod(Method member) {
         super(member);
 
         //解析请求参数
@@ -84,14 +84,13 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
                 }
 
                 return docPojoClassList;
+            } else {
+                Class paramClass = Parse.autoParse(member.getSourceRoot(), member.getType());
+                if(paramClass != null){
+                    return Lists.newArrayList(new DocPojoClass(paramClass));
+                }
             }
 
-        }
-
-        //智能寻找
-        Class paramClass = Parse.autoParse(member.getSourceRoot(), member.getType());
-        if(paramClass != null){
-            return Lists.newArrayList(new DocPojoClass(paramClass));
         }
 
         return null;
@@ -109,8 +108,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
     }
 
     private boolean skipMethodParam(MethodParam methodParam, Comment.Tag tag){
-        if("HttpServletResponse".equals(methodParam.getType()) ||
-                "HttpServletRequest".equals(methodParam.getType())){
+        if("RequestContext".equals(methodParam.getType())){
             return true;
         }
 
@@ -144,50 +142,19 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
 
     private List<DocRequestParam> parseRequestParams(){
         List<MethodParam> params = ((Method)member).getParams();
-        List<DocRequestParam>  requestParams = new ArrayList<DocRequestParam>();
+        List<DocRequestParam>  requestParams = new ArrayList<>();
 
         if(!CollectionUtils.isEmpty(params)){
             for(MethodParam methodParam:params){
-                Annotation annotation  =  methodParam.getAnnotationByName("RequestParam");
-                if(annotation == null){
-                    annotation = methodParam.getAnnotationByName("PathVariable");
-                }
-
                 Comment.Tag paramTag =   member.getComment()!=null?member.getComment().getParamTagByName(methodParam.getName()):null;
 
-                if(annotation == null && skipMethodParam(methodParam, paramTag)){
+                if(skipMethodParam(methodParam, paramTag)){
                     //跳过 非api参数的解析
                     continue;
                 }
 
                 DocRequestParam requestParam = new DocRequestParam();
-
                 requestParam.setType(methodParam.getType());
-
-                if(annotation == null || MarkerAnnotation.class.isInstance(annotation)){
-
-                    requestParam.setName(methodParam.getName());
-
-                }else if(SingleAnnotation.class.isInstance(annotation)){
-
-                    requestParam.setName(((SingleAnnotation)annotation).getValue());
-                    requestParam.setRequired(true);
-
-                }else if(NormalAnnotation.class.isInstance(annotation)){
-                    NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
-
-                    String isRequire = normalAnnotation.getValue("required");
-
-                    requestParam.setRequired(StringUtils.isEmpty(isRequire) || isRequire.equals("true"));
-
-                    requestParam.setName(normalAnnotation.getValue("name"));
-
-                    if(StringUtils.isEmpty(requestParam.getName())){
-                        requestParam.setName(normalAnnotation.getValue("value"));
-                    }
-                    requestParam.setDefaultValue(normalAnnotation.getValue("defaultValue"));
-                }
-
                 if(paramTag != null){
                     requestParam.setDescription(paramTag.getContent());
 
@@ -211,7 +178,6 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
                         }
                     }
                 }
-
 
                 requestParams.add(requestParam);
             }

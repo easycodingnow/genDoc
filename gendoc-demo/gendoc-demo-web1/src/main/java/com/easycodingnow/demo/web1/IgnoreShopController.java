@@ -1,5 +1,6 @@
 package com.easycodingnow.demo.web1;
 
+import com.easycodingnow.demo.domain.Shop;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,10 +20,10 @@ public class IgnoreShopController {
      * 通过名称获取商店信息
      * @param shopName 商店名称(模糊查询)
      * @param shopNum  商店数量
-     * @return 商品实体#type:com.easycodingnow.demo.domain.Shop#
+     * @return 商品实体
      */
     @RequestMapping("getShop")
-    public Object getShopsV2(String shopName, int shopNum){
+    public Shop getShopsV2(String shopName, int shopNum){
         return null;
     }
 

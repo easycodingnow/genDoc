@@ -1,10 +1,14 @@
 package com.easycodingnow;
 
 import com.easycodingnow.utils.CollectionUtils;
+import com.easycodingnow.utils.FileUtils;
 import com.easycodingnow.utils.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,7 +21,6 @@ public class GenConfig {
 
     private static GenConfig genConfig = new GenConfig();
 
-    private List<String> scanPackages;
 
     private List<String> sourcePathRoot;
 
@@ -44,10 +47,6 @@ public class GenConfig {
             return false;
         }
 
-        if(CollectionUtils.isEmpty(scanPackages)){
-            logger.error("gendoc gen failure！ GenConfig.scanPackages was required!");
-            return false;
-        }
 
         if(StringUtils.isEmpty(outputPath)){
             logger.error("gendoc gen failure！ GenConfig.outputPath was required!");
@@ -59,32 +58,54 @@ public class GenConfig {
     }
 
     //解析的web框架类型，目前只支持spring mvc
-    enum WebType{
-        SPRING_MVC;
+    public static enum WebType{
+        SPRING_MVC,
+        RPC_API;
     }
 
     //输出文档类型，目前只支持HTML
-    enum OutPutType{
-
+    public static enum OutPutType{
         HTML,
+        RPC_HTML,
         MARKDOWN,
         WORD;
 
     }
 
-    public List<String> getScanPackages() {
-        return scanPackages;
-    }
 
-    public void setScanPackages(List<String> scanPackages) {
-        this.scanPackages = scanPackages;
-    }
+
 
     public List<String> getSourcePathRoot() {
         return sourcePathRoot;
     }
 
     public void setSourcePathRoot(List<String> sourcePathRoot) {
+        this.sourcePathRoot = sourcePathRoot;
+    }
+
+    /**
+     * 设置一个path 只能解析sourcePathRoot
+     * @param path
+     */
+    public void setSourcePath(String path) {
+        File file = new File(path);
+        if (!file.exists()) {
+            throw new RuntimeException(path + " sourcePath 文件夹不存在!");
+        }
+        if (!file.isDirectory()) {
+            throw new RuntimeException(path + " sourcePath 必须是个文件夹!");
+        }
+        if (this.sourcePathRoot == null) {
+            this.sourcePathRoot = new ArrayList<>();
+        }
+
+        this.sourcePathRoot.addAll(FileUtils.getJavaSourcePath(path));
+
+        if (CollectionUtils.isEmpty(this.sourcePathRoot)) {
+            throw new RuntimeException(path + " 下没有可解析的java源文件目录！");
+        }
+
+
         this.sourcePathRoot = sourcePathRoot;
     }
 
