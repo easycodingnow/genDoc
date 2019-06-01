@@ -15,7 +15,6 @@ public class Class extends Member{
 
     private List<Class> innerClass; //内部类
 
-    private Class parentClass; //父类
 
 
     public List<Field> getFields() {
@@ -42,11 +41,4 @@ public class Class extends Member{
         this.innerClass = innerClass;
     }
 
-    public Class getParentClass() {
-        return parentClass;
-    }
-
-    public void setParentClass(Class parentClass) {
-        this.parentClass = parentClass;
-    }
 }

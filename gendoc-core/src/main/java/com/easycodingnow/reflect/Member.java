@@ -14,7 +14,11 @@ public class Member {
 
     private GenConfig genConfig;
 
+    private List<String> imports;
+
     private Member parentMember;
+
+    private List<Class> innerClass; //内部类
 
     private String packageName;
 
@@ -39,10 +43,6 @@ public class Member {
         if(comment != null && StringUtils.isNotEmpty(comment.getDescription())){
             apiName = comment.getDescription().split("\n", 2)[0];
         }
-
-//        if(StringUtils.isEmpty(apiName)){
-//            apiName = getName();
-//        }
 
         return apiName;
     }
@@ -145,10 +145,34 @@ public class Member {
     }
 
     public GenConfig getGenConfig() {
-        if (parentMember != null) {
+        if (genConfig == null) {
             return parentMember.getGenConfig();
         }
         return genConfig;
+    }
+
+    public List<String> getImports() {
+        if (imports == null) {
+            return parentMember.getImports();
+        }
+
+        return imports;
+    }
+
+    public List<Class> getInnerClass() {
+        if (innerClass == null) {
+            return parentMember.getInnerClass();
+        }
+
+        return innerClass;
+    }
+
+    public void setInnerClass(List<Class> innerClass) {
+        this.innerClass = innerClass;
+    }
+
+    public void setImports(List<String> imports) {
+        this.imports = imports;
     }
 
     public void setGenConfig(GenConfig genConfig) {

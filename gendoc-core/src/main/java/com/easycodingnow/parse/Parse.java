@@ -1,18 +1,13 @@
 package com.easycodingnow.parse;
 
 import com.easycodingnow.GenConfig;
+import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
-import com.easycodingnow.reflect.Field;
-import com.easycodingnow.reflect.Method;
-import com.easycodingnow.reflect.MethodParam;
 import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.FileUtils;
 import com.easycodingnow.utils.StringUtils;
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.*;
 import com.github.javaparser.ast.body.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -35,16 +30,44 @@ public class Parse {
 
     private static final Log logger = LogFactory.getLog(Parse.class);
 
-    public static Class autoParse(GenConfig genConfig, String type){
-        String genericType = ParseHelper.findGenericType(type);
+    public static Class autoParse(Member member){
+        String genericType = ParseHelper.findGenericType(member.getType());
         if (ParseHelper.isJavaLangType(genericType)) {
             return null;
         }
-        for(String sr:genConfig.getSourcePathRoot()){
+
+        //完全限定名的话就直接解析
+        if (genericType.contains(".")) {
+            return parse(genericType, member.getGenConfig());
+        }
+
+        //先从内部类里面找
+        List<Class> innerClasses = member.getInnerClass();
+        if (!CollectionUtils.isEmpty(innerClasses)) {
+            for (Class cls:innerClasses) {
+                if (cls.getName().equals(genericType)) {
+                    return cls;
+                }
+            }
+        }
+
+        //优先从import里面查找
+        List<String> imports = member.getImports();
+        if (!CollectionUtils.isEmpty(imports)) {
+            for (String importCls:imports) {
+                String[] strArr = importCls.split("\\.");
+                if (strArr[strArr.length - 1].equals(genericType)) {
+                    return parse(importCls, member.getGenConfig());
+                }
+            }
+        }
+
+        //全局搜索
+        for(String sr:member.getGenConfig().getSourcePathRoot()){
             File file = FileUtils.getJavaFileByFileName(sr,  genericType+ ".java");
             if(file != null && file.exists() && file.isFile()){
                 try {
-                    return parse(new FileInputStream(file), genConfig);
+                    return parse(new FileInputStream(file), member.getGenConfig());
                 } catch (FileNotFoundException e) {
                     logger.error("file not found!", e);
                 }
@@ -103,6 +126,7 @@ public class Parse {
                         innerCls.setModifier(ParseHelper.parseModifiers(n));
                         innerCls.setGenConfig(genConfig);
                         innerCls.setPackageName(parentCls.getPackageName());
+                        innerCls.setParentMember(parentCls);
 
                         List<Class> innerClassList =  parentCls.getInnerClass();
                         if(innerClassList == null){
@@ -116,6 +140,17 @@ public class Parse {
                         cls.setName(n.getNameAsString());
                         cls.setComment(ParseHelper.parseComment(n));
                         cls.setAnnotations(ParseHelper.parseAnnotation(n, cls));
+
+                        if (n.getParentNode().isPresent()
+                        && n.getParentNode().get() instanceof CompilationUnit) {
+                            CompilationUnit compilationUnit = (CompilationUnit) n.getParentNode().get();
+                            List<String> imports = new ArrayList<>();
+                            for (ImportDeclaration importDeclaration :compilationUnit.getImports() ) {
+                                imports.add(importDeclaration.getNameAsString());
+                            }
+                            cls.setImports(imports);
+                        }
+
                         cls.setModifier(ParseHelper.parseModifiers(n));
                         cls.setGenConfig(genConfig);
                         clsMap.put(n.getNameAsString(), cls);

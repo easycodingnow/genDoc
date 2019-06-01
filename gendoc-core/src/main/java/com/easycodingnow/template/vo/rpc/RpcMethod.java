@@ -85,7 +85,7 @@ public class RpcMethod extends RpcApiMember implements DocApiMethod {
 
                 return docPojoClassList;
             } else {
-                Class paramClass = Parse.autoParse(member.getGenConfig(), member.getType());
+                Class paramClass = Parse.autoParse(member);
                 if(paramClass != null){
                     return Lists.newArrayList(new DocPojoClass(paramClass));
                 }
@@ -172,7 +172,7 @@ public class RpcMethod extends RpcApiMember implements DocApiMethod {
                         requestParam.setTypeDoc(docPojoClassList);
                     } else {
                         //智能寻找
-                        Class paramClass = Parse.autoParse(member.getGenConfig(), methodParam.getType());
+                        Class paramClass = Parse.autoParse(methodParam);
                         if(paramClass != null){
                             requestParam.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
                         }

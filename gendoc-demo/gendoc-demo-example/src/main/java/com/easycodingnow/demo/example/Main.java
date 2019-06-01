@@ -29,8 +29,8 @@ public class Main {
      */
     private static void genDoc(){
 
-        String sourcePath = ""; //源代码目录
-        String outPath = ""; //生成的文件输出目录
+        String sourcePath = "";
+        String outPath = "";
         GenDoc.gen(sourcePath, outPath);
     }
 }

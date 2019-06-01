@@ -134,7 +134,7 @@ public class DocPojoClass {
 
                 if (CollectionUtils.isEmpty(docField.getTypeDoc())) {
                     //尝试字段解析类型
-                    Class paramClass = Parse.autoParse(field.getGenConfig(), field.getType());
+                    Class paramClass = Parse.autoParse(field);
                     if(paramClass != null){
                         docField.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
                     }

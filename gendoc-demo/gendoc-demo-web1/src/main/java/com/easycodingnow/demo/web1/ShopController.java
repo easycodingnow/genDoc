@@ -1,7 +1,7 @@
 package com.easycodingnow.demo.web1;
 
 import com.easycoding.demo.domain.Result;
-import com.easycodingnow.demo.domain.Shop;
+import com.easycodingnow.demo.domain.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +19,7 @@ public class ShopController {
 
 
     /**
-     * 获取商店 泛型解析
-     * 通过名称获取商店信息
+     * 泛型解析测试
      * @param shopName 商店名称(模糊查询)
      * @param shopNum  商店数量
      * @return 商品实体

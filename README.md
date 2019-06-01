@@ -35,12 +35,22 @@ Help you to generate API documents
 将example/Main.java  中的扫描的源码路径 和 包改成自己项目的。运行main方法即可生成。
 
 # Tip
+# 解析规则
 * 类和方法的注释第一行默认为注释或者方法的名称，其他行为描述
 * 注释添加#ignore#将会调过此类或者方法的解析
+
+# 参数智能查询
+* 所以的参数对象和返回对象都会在扫描包下面智能搜索
+
+# 泛型解析
 * 泛型解析比如List<User> List<List<User>>  Map<String, User>  Map<String,List<User>> 都只会解析出一个User对象，map集合只会解析value的值
-* 如果返回值或者参数是类似于Result<T> 或者Object这种无法解析的对象，可以在注释类指定解析类型，如下所示
+* 如果返回值或者参数是类似于Result<T> 或者Object这种无法解析的对象，可以在注释类指定解析类型
+
+# 指定解析类型
 * @return #type:com.domian.User,com.domian.Person#   在方法注释后面添加#type:...# 元信息可以生成返回值描述
 * @param user  #type:com.domian.User,com.domian.Person# 在参数注释的 后面添加#type:...# 元信息可以生成请求实体描述
+
+
 
 # 计划
 * 目前只支持spring mvc类型web项目（后面会陆续支持各种类型web项目的生成，如果你有需求可自行改造，提交pr）

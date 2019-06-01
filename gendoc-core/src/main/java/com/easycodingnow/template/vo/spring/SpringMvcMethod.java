@@ -89,7 +89,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
         }
 
         //智能寻找
-        Class paramClass = Parse.autoParse(member.getGenConfig(), member.getType());
+        Class paramClass = Parse.autoParse(member);
         if(paramClass != null){
             return Lists.newArrayList(new DocPojoClass(paramClass));
         }
@@ -205,7 +205,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
                         requestParam.setTypeDoc(docPojoClassList);
                     } else {
                         //智能寻找
-                        Class paramClass = Parse.autoParse(member.getGenConfig(), methodParam.getType());
+                        Class paramClass = Parse.autoParse(methodParam);
                         if(paramClass != null){
                             requestParam.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
                         }
