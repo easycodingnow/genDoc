@@ -38,8 +38,8 @@ Help you to generate API documents
 * 类和方法的注释第一行默认为注释或者方法的名称，其他行为描述
 * 注释添加#ignore#将会调过此类或者方法的解析
 
-# 参数智能查询
-* 所以的参数对象和返回对象都会在扫描包下面智能搜索
+# 对象智能查询
+* 智能查询和解析对象
 
 # 泛型解析
 * 泛型解析比如List<User> List<List<User>>  Map<String, User>  Map<String,List<User>> 都只会解析出一个User对象，map集合只会解析value的值
@@ -52,9 +52,10 @@ Help you to generate API documents
 
 
 # 计划
-* 目前只支持spring mvc类型web项目（后面会陆续支持各种类型web项目的生成，如果你有需求可自行改造，提交pr）
-* 丰富文档输出类型，多种样式的html文档，makrdown，word文档
+* 目前只支持spring mvc和rpc类型项目。后面集合完善其他类型api的解析接入
+* 丰富文档输出类型，多种样式的html文档，markdown，word文档等
 * 在线调试api
+* 提供在线文档服务，和git等版本管理工具结合
 
 # 生成效果
 ![Alt](https://github.com/easycodingnow/genDoc/blob/master/doc.png)
