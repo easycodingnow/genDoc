@@ -38,9 +38,6 @@ Help you to generate API documents
 * 类和方法的注释第一行默认为注释或者方法的名称，其他行为描述
 * 注释添加#ignore#将会调过此类或者方法的解析
 
-# 对象智能查询
-* 智能查询和解析对象
-
 # 泛型解析
 * 泛型解析比如List<User> List<List<User>>  Map<String, User>  Map<String,List<User>> 都只会解析出一个User对象，map集合只会解析value的值
 * 如果返回值或者参数是类似于Result<T> 或者Object这种无法解析的对象，可以在注释类指定解析类型
@@ -48,6 +45,11 @@ Help you to generate API documents
 # 指定解析类型
 * @return #type:com.domian.User,com.domian.Person#   在方法注释后面添加#type:...# 元信息可以生成返回值描述
 * @param user  #type:com.domian.User,com.domian.Person# 在参数注释的 后面添加#type:...# 元信息可以生成请求实体描述
+
+# 配置需要忽略解析的参数
+* 有的时候，一些方法参数不是具体的入参对象，不希望被解析到，可以在解析配置里面配置要忽略的参数
+GenConfig.ignoreApiAnnotationParam  如果参数有ignoreApiAnnotationParam里面的注解就会被忽略
+GenConfig.ignoreApiTypeParam  如果参数类型在ignoreApiTypeParam配置的列表里面就会被忽略
 
 
 
