@@ -1,5 +1,6 @@
 package com.easycodingnow.reflect;
 
+import com.easycodingnow.GenConfig;
 import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.StringUtils;
 
@@ -11,12 +12,11 @@ import java.util.List;
  */
 public class Member {
 
+    private GenConfig genConfig;
+
     private Member parentMember;
 
     private String packageName;
-
-    private List<String> sourceRoot;
-
 
     private String name;
 
@@ -27,11 +27,6 @@ public class Member {
     private List<Annotation> annotations;
 
     private List<String> modifier;
-
-    public List<String> getSourceRoot() {
-
-        return sourceRoot!=null?sourceRoot:(parentMember!=null?parentMember.getSourceRoot():null);
-    }
 
     public String getPackageName() {
 
@@ -107,9 +102,7 @@ public class Member {
         this.packageName = packageName;
     }
 
-    public void setSourceRoot(List<String> sourceRoot) {
-        this.sourceRoot = sourceRoot;
-    }
+
 
     public String getName() {
         return name;
@@ -149,5 +142,16 @@ public class Member {
 
     public void setModifier(List<String> modifier) {
         this.modifier = modifier;
+    }
+
+    public GenConfig getGenConfig() {
+        if (parentMember != null) {
+            return parentMember.getGenConfig();
+        }
+        return genConfig;
+    }
+
+    public void setGenConfig(GenConfig genConfig) {
+        this.genConfig = genConfig;
     }
 }

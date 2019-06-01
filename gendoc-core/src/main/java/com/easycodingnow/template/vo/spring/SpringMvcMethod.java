@@ -77,7 +77,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
                 String[] paramTypes = returnTag.getMetaData().get("type").split(",");
 
                 for(String paramType:paramTypes){
-                    Class paramClass = Parse.parse(paramType.trim(), member.getSourceRoot());
+                    Class paramClass = Parse.parse(paramType.trim(), member.getGenConfig());
                     if(paramClass != null){
                         docPojoClassList.add(new DocPojoClass(paramClass));
                     }
@@ -89,7 +89,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
         }
 
         //智能寻找
-        Class paramClass = Parse.autoParse(member.getSourceRoot(), member.getType());
+        Class paramClass = Parse.autoParse(member.getGenConfig(), member.getType());
         if(paramClass != null){
             return Lists.newArrayList(new DocPojoClass(paramClass));
         }
@@ -114,7 +114,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
             return true;
         }
 
-        List<String> ignoreAnnotations = GenConfig.getGenConfig().getIgnoreApiAnnotationParam();
+        List<String> ignoreAnnotations = member.getGenConfig().getIgnoreApiAnnotationParam();
         if(!CollectionUtils.isEmpty(ignoreAnnotations) && !CollectionUtils.isEmpty(methodParam.getAnnotations())){
             List<String> annotations = methodParam.getAnnotations().stream().map((Annotation::getName)).collect(Collectors.toList());
             for(String ignoreAnnotation:ignoreAnnotations){
@@ -125,7 +125,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
         }
 
 
-        List<String> ignoreTypeParam = GenConfig.getGenConfig().getIgnoreApiTypeParam();
+        List<String> ignoreTypeParam = methodParam.getGenConfig().getIgnoreApiTypeParam();
         if(!CollectionUtils.isEmpty(ignoreTypeParam)){
             if(ignoreTypeParam.contains(methodParam.getType())){
                 return true;
@@ -197,7 +197,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
                         List<DocPojoClass> docPojoClassList = new ArrayList<DocPojoClass>();
                         String[] paramTypes = metaMap.get("type").split(",");
                         for(String paramType:paramTypes){
-                            Class paramClass = Parse.parse(paramType.trim(), member.getSourceRoot());
+                            Class paramClass = Parse.parse(paramType.trim(), member.getGenConfig());
                             if(paramClass != null){
                                 docPojoClassList.add(new DocPojoClass(paramClass));
                             }
@@ -205,7 +205,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
                         requestParam.setTypeDoc(docPojoClassList);
                     } else {
                         //智能寻找
-                        Class paramClass = Parse.autoParse(member.getSourceRoot(), methodParam.getType());
+                        Class paramClass = Parse.autoParse(member.getGenConfig(), methodParam.getType());
                         if(paramClass != null){
                             requestParam.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
                         }

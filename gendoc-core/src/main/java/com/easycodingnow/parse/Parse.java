@@ -1,5 +1,6 @@
 package com.easycodingnow.parse;
 
+import com.easycodingnow.GenConfig;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.reflect.Field;
 import com.easycodingnow.reflect.Method;
@@ -34,16 +35,16 @@ public class Parse {
 
     private static final Log logger = LogFactory.getLog(Parse.class);
 
-    public static Class autoParse(List<String> sourceRoot, String type){
+    public static Class autoParse(GenConfig genConfig, String type){
         String genericType = ParseHelper.findGenericType(type);
         if (ParseHelper.isJavaLangType(genericType)) {
             return null;
         }
-        for(String sr:sourceRoot){
+        for(String sr:genConfig.getSourcePathRoot()){
             File file = FileUtils.getJavaFileByFileName(sr,  genericType+ ".java");
             if(file != null && file.exists() && file.isFile()){
                 try {
-                    return parse(new FileInputStream(file), sourceRoot);
+                    return parse(new FileInputStream(file), genConfig);
                 } catch (FileNotFoundException e) {
                     logger.error("file not found!", e);
                 }
@@ -52,14 +53,14 @@ public class Parse {
         return null;
     }
 
-    public static Class parse(String fullyName, List<String> sourceRoot){
+    public static Class parse(String fullyName, GenConfig genConfig){
 
-        for(String sr:sourceRoot){
+        for(String sr:genConfig.getSourcePathRoot()){
             String absPath = sr+"/"+fullyName.replaceAll("\\.", "/")+".java";
             File file = new File(absPath);
             if(file.exists() && file.isFile()){
                 try {
-                    return parse(new FileInputStream(file), sourceRoot);
+                    return parse(new FileInputStream(file), genConfig);
                 } catch (FileNotFoundException e) {
                     logger.error("file not found!", e);
                 }
@@ -71,14 +72,14 @@ public class Parse {
         return null;
     }
 
-    public static Class parse(InputStream inputStream, List<String> sourceRoot){
+    public static Class parse(InputStream inputStream, GenConfig genConfig){
         CompilationUnit cu = JavaParser.parse(inputStream);
-        return innerParse(cu, sourceRoot);
+        return innerParse(cu, genConfig);
     }
 
-    private static Class innerParse(CompilationUnit cu, final List<String> sourceRoot){
+    private static Class innerParse(CompilationUnit cu, GenConfig genConfig){
         final Class cls = new Class();
-        final HashMap<String , Class> clsMap = new HashMap(); //类名称和类的映射关系
+        final HashMap<String , Class> clsMap = new HashMap<>(); //类名称和类的映射关系
 
         cu.accept(new VoidVisitorAdapter<Void>(){
 
@@ -100,7 +101,7 @@ public class Parse {
                         innerCls.setComment(ParseHelper.parseComment(n));
                         innerCls.setAnnotations(ParseHelper.parseAnnotation(n, innerCls));
                         innerCls.setModifier(ParseHelper.parseModifiers(n));
-                        innerCls.setSourceRoot(sourceRoot);
+                        innerCls.setGenConfig(genConfig);
                         innerCls.setPackageName(parentCls.getPackageName());
 
                         List<Class> innerClassList =  parentCls.getInnerClass();
@@ -116,7 +117,7 @@ public class Parse {
                         cls.setComment(ParseHelper.parseComment(n));
                         cls.setAnnotations(ParseHelper.parseAnnotation(n, cls));
                         cls.setModifier(ParseHelper.parseModifiers(n));
-                        cls.setSourceRoot(sourceRoot);
+                        cls.setGenConfig(genConfig);
                         clsMap.put(n.getNameAsString(), cls);
                     }
 
@@ -140,6 +141,7 @@ public class Parse {
                         field.setAnnotations(ParseHelper.parseAnnotation(n, field));
                         field.setModifier(ParseHelper.parseModifiers(n));
                         field.setParentMember(fieldClass);
+                        field.setGenConfig(genConfig);
 
                         if(!field.ignore()){
                             List<Field> fields = fieldClass.getFields();
@@ -186,7 +188,7 @@ public class Parse {
                     if(!method.ignore()){
                         List<Method> methods = fieldClass.getMethods();
                         if(methods == null){
-                            methods = new ArrayList<Method>();
+                            methods = new ArrayList<>();
                             fieldClass.setMethods(methods);
                         }
                         methods.add(method);

@@ -28,7 +28,25 @@ import java.util.Map;
 public class GenDoc {
     private static final Log logger = LogFactory.getLog(GenDoc.class);
 
+    private GenConfig genConfig;
+
     public static void gen(GenConfig genConfig){
+        new GenDoc(genConfig).gen();
+    }
+
+    public static void gen(String sourcePath, String outPath){
+        GenConfig genConfig = new GenConfig();
+        genConfig.setOutputPath(outPath);
+        genConfig.setSourcePath(sourcePath);
+        gen(genConfig);
+    }
+
+
+    public GenDoc(GenConfig genConfig){
+        this.genConfig = genConfig;
+    }
+
+    public void gen(){
 
         if(!genConfig.validate()){
             //配置校验
@@ -47,7 +65,7 @@ public class GenDoc {
             List<String> fileList = FileUtils.getJavaFileList(path);
             try {
                 for(String filePath:fileList){
-                    Class cls = Parse.parse(new FileInputStream(filePath), sourcePathRoot);
+                    Class cls = Parse.parse(new FileInputStream(filePath), genConfig);
 
                     if(GenConfig.WebType.SPRING_MVC.equals(genConfig.getWebType())){
                         DocApiApiClass docClass = parseSpringMvcClass(cls);
@@ -76,7 +94,7 @@ public class GenDoc {
         }
     }
 
-    private static DocApiApiClass parseSpringMvcClass(Class cls){
+    private  DocApiApiClass parseSpringMvcClass(Class cls){
         if(cls.getAnnotationByName("Controller") != null || cls.getAnnotationByName("RestController") != null){
             if(!cls.ignore()){
                 return SpringConvertHelper.convertToSpringMvcClass(cls);
@@ -85,7 +103,7 @@ public class GenDoc {
         return null;
     }
 
-    private static DocApiApiClass parseRpcApiClass(Class cls){
+    private  DocApiApiClass parseRpcApiClass(Class cls){
         if(cls.getAnnotationByName("Api") != null){
             if(!cls.ignore()){
                 return RpcApiConvertHelper.convertToRpcApi(cls);
@@ -95,16 +113,16 @@ public class GenDoc {
         return null;
     }
 
-    private static void genHtml(List<DocApiApiClass> docClassList, String outPutPath){
+    private  void genHtml(List<DocApiApiClass> docClassList, String outPutPath){
         try {
 
             Map<String, Object> mapData = new HashMap<String, Object>();
             mapData.put("jsonData", JSON.toJSONString(docClassList));
             mapData.put("classList", docClassList);
             String html = "";
-            if (GenConfig.getGenConfig().getOutPutType().equals(GenConfig.OutPutType.HTML)) {
+            if (genConfig.getOutPutType().equals(GenConfig.OutPutType.HTML)) {
                 html = TemplateParse.parseTemplate("html/index.ftl", mapData);
-            } else if (GenConfig.getGenConfig().getOutPutType().equals(GenConfig.OutPutType.RPC_HTML)) {
+            } else if (genConfig.getOutPutType().equals(GenConfig.OutPutType.RPC_HTML)) {
                 html = TemplateParse.parseTemplate("html/rpc.ftl", mapData);
             }
 

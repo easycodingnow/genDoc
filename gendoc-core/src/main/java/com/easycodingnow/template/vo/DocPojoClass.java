@@ -111,7 +111,7 @@ public class DocPojoClass {
                                 if(classArr.length == 2){
                                     String publicClass = classArr[0];
                                     String innerClassName = classArr[1];
-                                    Class pCls = Parse.parse(publicClass.trim(), cls.getSourceRoot());
+                                    Class pCls = Parse.parse(publicClass.trim(), cls.getGenConfig());
                                     if(pCls !=null && !CollectionUtils.isEmpty(pCls.getInnerClass())){
                                         for(Class innerCls:pCls.getInnerClass()){
                                             if(innerClassName.equals(innerCls.getName())){
@@ -121,7 +121,7 @@ public class DocPojoClass {
                                     }
                                 }
                             }else{
-                                paramClass = Parse.parse(paramType.trim(), cls.getSourceRoot());
+                                paramClass = Parse.parse(paramType.trim(), cls.getGenConfig());
                             }
 
                             if(paramClass != null){
@@ -134,7 +134,7 @@ public class DocPojoClass {
 
                 if (CollectionUtils.isEmpty(docField.getTypeDoc())) {
                     //尝试字段解析类型
-                    Class paramClass = Parse.autoParse(field.getSourceRoot(), field.getType());
+                    Class paramClass = Parse.autoParse(field.getGenConfig(), field.getType());
                     if(paramClass != null){
                         docField.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
                     }

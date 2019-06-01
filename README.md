@@ -4,9 +4,14 @@ Help you to generate API documents
 通过注释生成api文档。
 亮点和优势：
 * 一键生成，几乎不需要任何开发量
+* 支持spring mvc各种注解配置
+* 兼容swagger的部分注解，如果之前已经接过swagger，swagger部分不用做任何更改即可接入
+* 智能查找参数和返回值类型
+* 支持参数的泛型解析
 * 通过注释生成文档，对代码没有任何入侵性
 * 注释即文档，生成文档必须书写规范的代码注释，提高了代码的可读性。
 * 生成离线html文档，文档页面美观直接，支持接口搜索，实体信息查看，比传统的手写文档更加方便快捷。
+* 可扩展性强，模型分层设计，可以自定义输出结果，可以自行扩展解析能力
 
 # Quick Start
 * clone 代码到本地
@@ -14,19 +19,17 @@ Help you to generate API documents
 ``` java
     private static void genDoc(){
 
-        //项目的根目录
+        //项目的根目录，根据自己机器情况配置
         String projectRootPath = "";
-        
-        GenConfig genConfig = new GenConfig();
-        genConfig.setOutputPath(projectRootPath+"/gendoc-demo/gendoc-demo-example/src/main/resources/gendoc/out/html");
-        genConfig.setScanPackages(Arrays.asList("com.easycodingnow.demo.web1", "com.easycodingnow.demo.web2"));
-        genConfig.setSourcePathRoot(Arrays.asList(
-                projectRootPath + "/gendoc-demo/gendoc-demo-web1/src/main/java",
-                projectRootPath + "/gendoc-demo/gendoc-demo-domain/src/main/java",
-                projectRootPath + "/gendoc-demo/gendoc-demo-web2/src/main/java"
-        ));
 
+        GenConfig genConfig = new GenConfig();
+        //配置文件输出目录
+        genConfig.setOutputPath(projectRootPath+"/gendoc-demo-example/src/main/resources/gendoc/out/html");
+        //配置代码扫描目录
+        genConfig.setSourcePath(projectRootPath);
+        //生成文件
         GenDoc.gen(genConfig);
+
     }
 ```
 * 修改projectRootPath变量，改成当前项目的根目录

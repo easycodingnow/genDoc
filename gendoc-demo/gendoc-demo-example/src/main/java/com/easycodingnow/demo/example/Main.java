@@ -29,12 +29,8 @@ public class Main {
      */
     private static void genDoc(){
 
-        //项目的根目录
-        String projectRootPath = "";
-
-        GenConfig genConfig = new GenConfig();
-        genConfig.setOutputPath(projectRootPath+"/gendoc-demo-example/src/main/resources/gendoc/out/html");
-        genConfig.setSourcePath(projectRootPath);
-        GenDoc.gen(genConfig);
+        String sourcePath = "/Users/lihao/Desktop/java/genDoc/gendoc-demo";
+        String outPath = "/Users/lihao/Desktop/java/genDoc/gendoc-demo/gendoc-demo-example/src/main/resources/gendoc/out/html";
+        GenDoc.gen(sourcePath, outPath);
     }
 }
