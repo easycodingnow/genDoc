@@ -104,9 +104,6 @@ public class GenConfig {
         if (CollectionUtils.isEmpty(this.sourcePathRoot)) {
             throw new RuntimeException(path + " 下没有可解析的java源文件目录！");
         }
-
-
-        this.sourcePathRoot = sourcePathRoot;
     }
 
     public String getOutputPath() {

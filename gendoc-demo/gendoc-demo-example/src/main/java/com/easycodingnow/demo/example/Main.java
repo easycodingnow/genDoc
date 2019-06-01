@@ -30,7 +30,7 @@ public class Main {
     private static void genDoc(){
 
         //项目的根目录
-        String projectRootPath = "/Users/lihao/Desktop/java/genDoc/gendoc-demo";
+        String projectRootPath = "";
 
         GenConfig genConfig = new GenConfig();
         genConfig.setOutputPath(projectRootPath+"/gendoc-demo-example/src/main/resources/gendoc/out/html");
