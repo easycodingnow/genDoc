@@ -3,7 +3,7 @@ Help you to generate API documents
 
 通过注释生成api文档。
 亮点和优势：
-* 一键生成，几乎不需要任何开发量
+* 一键生成，不需要任何开发量，只要补充完善自己的注释即可
 * 支持spring mvc各种注解配置
 * 兼容swagger的部分注解，如果之前已经接过swagger，swagger部分不用做任何更改即可接入
 * 智能查找参数和返回值类型
@@ -20,21 +20,15 @@ Help you to generate API documents
     private static void genDoc(){
 
         //项目的根目录，根据自己机器情况配置
-        String projectRootPath = "";
-
-        GenConfig genConfig = new GenConfig();
-        //配置文件输出目录
-        genConfig.setOutputPath(projectRootPath+"/gendoc-demo-example/src/main/resources/gendoc/out/html");
-        //配置代码扫描目录
-        genConfig.setSourcePath(projectRootPath);
-        //生成文件
-        GenDoc.gen(genConfig);
+        String sourcePath = ""; //源代码目录
+        String outPath = ""; //生成的文件输出目录
+        GenDoc.gen(sourcePath, outPath);
 
     }
 ```
-* 修改projectRootPath变量，改成当前项目的根目录
-* 运行main方法
-* 用浏览器打开gendoc-demo/gendoc-demo-example/src/main/resources/gendoc/out/html/doc.html
+* 填写要扫描的源代码目录sourcePath
+* 填写生成文档的输出目录outPath
+* 运行main函数
 
 
 # 如何集成到自己的项目
@@ -43,6 +37,8 @@ Help you to generate API documents
 # Tip
 * 类和方法的注释第一行默认为注释或者方法的名称，其他行为描述
 * 注释添加#ignore#将会调过此类或者方法的解析
+* 泛型解析比如List<User> List<List<User>>  Map<String, User>  Map<String,List<User>> 都只会解析出一个User对象，map集合只会解析value的值
+* 如果返回值或者参数是类似于Result<T> 或者Object这种无法解析的对象，可以在注释类指定解析类型，如下所示
 * @return #type:com.domian.User,com.domian.Person#   在方法注释后面添加#type:...# 元信息可以生成返回值描述
 * @param user  #type:com.domian.User,com.domian.Person# 在参数注释的 后面添加#type:...# 元信息可以生成请求实体描述
 
