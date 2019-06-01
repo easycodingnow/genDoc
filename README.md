@@ -19,7 +19,6 @@ Help you to generate API documents
 ``` java
     private static void genDoc(){
 
-        //项目的根目录，根据自己机器情况配置
         String sourcePath = ""; //源代码目录
         String outPath = ""; //生成的文件输出目录
         GenDoc.gen(sourcePath, outPath);
