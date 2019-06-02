@@ -190,9 +190,6 @@ public class Parse {
                         cls.setModifier(ParseHelper.parseModifiers(n));
                         cls.setGenConfig(genConfig);
                         clsMap.put(n.getNameAsString(), cls);
-                        if (StringUtils.isEmpty(cls.getName())) {
-                            System.out.println("asa");
-                        }
                     }
 
                 }
