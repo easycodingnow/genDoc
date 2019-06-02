@@ -26,9 +26,6 @@ Help you to generate API documents
 * 运行main函数
 
 
-# 如何集成到自己的项目
-将example/Main.java  中的扫描的源码路径 和 包改成自己项目的。运行main方法即可生成。
-
 # Tip
 # 解析规则
 * 类和方法的注释第一行默认为注释或者方法的名称，其他行为描述
@@ -38,16 +35,14 @@ Help you to generate API documents
 * 泛型解析比如List<User> List<List<User>>  Map<String, User>  Map<String,List<User>> 都只会解析出一个User对象，map集合只会解析value的值
 * 如果返回值或者参数是类似于Result<T> 或者Object这种无法解析的对象，可以在注释类指定解析类型
 
-# 指定解析类型
+# 指定类型
 * @return #type:com.domian.User,com.domian.Person#   在方法注释后面添加#type:...# 元信息可以生成返回值描述
 * @param user  #type:com.domian.User,com.domian.Person# 在参数注释的 后面添加#type:...# 元信息可以生成请求实体描述
 
-# 配置需要忽略解析的参数
+# 忽略解析
 * 有的时候，一些方法参数不是具体的入参对象，不希望被解析到，可以在解析配置里面配置要忽略的参数
 * GenConfig.ignoreApiAnnotationParam  如果参数有ignoreApiAnnotationParam里面的注解就会被忽略
 * GenConfig.ignoreApiTypeParam  如果参数类型在ignoreApiTypeParam配置的列表里面就会被忽略
-
-
 
 # 计划
 * 目前只支持spring mvc和rpc类型项目。后面集合完善其他类型api的解析接入
@@ -57,6 +52,10 @@ Help you to generate API documents
 
 # 生成效果
 ![Alt](https://github.com/easycodingnow/genDoc/blob/master/doc.png)
+
+# 联系方式
+* 如果你在使用过程中，有遇到任何问题或者疑问，可以随时提交issue.或者加入qq群交流
+<img src="http://chuantu.xyz/t6/702/1559451388x2890211704.jpg" width = "270" height = "365" alt="图片名称" align=center />
 
 
 
