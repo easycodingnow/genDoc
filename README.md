@@ -10,7 +10,7 @@ Help you to generate API documents
 * 生成离线html文档，文档页面美观直接，支持接口搜索，实体信息查看，比传统的手写文档更加方便快捷。
 
 # Quick Start
-* clone 代码到本地
+* git clone https://github.com/easycodingnow/genDoc.git
 * 打开gendoc-demo/gendoc-demo-example/src/main/java/com/easycodingnow/demo/example/Main.java 类
 ``` java
     private static void genDoc(){
