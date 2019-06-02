@@ -49,11 +49,14 @@ Help you to generate API documents
 * 提供在线文档服务，和git等版本管理工具结合
 
 # 生成效果
-![Alt](https://github.com/easycodingnow/genDoc/blob/master/doc.png)
+![Alt](https://pic4.zhimg.com/v2-65ad229d322fbd844d739817943f9def_r.jpg)
+![Alt](https://pic1.zhimg.com/v2-22127405d3a3b02742e8cc3cd2d2c72c_r.jpg)
+![Alt](https://pic2.zhimg.com/v2-89c0f05a60609648d2bc9183fb3ed95d_r.jpg)
+
 
 # 联系方式
 * 如果你在使用过程中，有遇到任何问题或者疑问，可以随时提交issue.或者加入qq群交流
-<img src="http://chuantu.xyz/t6/702/1559451388x2890211704.jpg" width = "270" height = "365" alt="图片名称" align=center />
+<img src="https://pic3.zhimg.com/v2-d82f4a4c334ff56a61cae32546190512_r.jpg" width = "270" height = "365" alt="图片名称" align=center />
 
 
 
