@@ -25,8 +25,6 @@ Help you to generate API documents
 * 填写生成文档的输出目录outPath
 * 运行main函数
 
-
-# Tip
 # 解析规则
 * 类和方法的注释第一行默认为注释或者方法的名称，其他行为描述
 * 注释添加#ignore#将会调过此类或者方法的解析
