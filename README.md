@@ -30,8 +30,8 @@ Help you to generate API documents
 * 注释添加#ignore#将会调过此类或者方法的解析
 
 # 泛型解析
-* 泛型解析比如List<User> List<List<User>>  Map<String, User>  Map<String,List<User>> 都只会解析出一个User对象，map集合只会解析value的值
-* 如果返回值或者参数是类似于Result<T> 或者Object这种无法解析的对象，可以在注释类指定解析类型
+* 泛型解析比如`List<User> List<List<User>>  Map<String, User>  Map<String,List<User>>` 都只会解析出一个User对象，map集合只会解析value的值
+* 如果返回值或者参数是类似于`Result<T> `或者`Object`这种无法解析的对象，可以在注释类指定解析类型
 
 # 指定类型
 * @return #type:com.domian.User,com.domian.Person#   在方法注释后面添加#type:...# 元信息可以生成返回值描述
