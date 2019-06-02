@@ -69,32 +69,7 @@ public class RpcMethod extends RpcApiMember implements DocApiMethod {
     }
 
     private List<DocPojoClass> parseReturnType(){
-        Comment.Tag returnTag = getReturnTag();
-
-        if(returnTag != null){
-            List<DocPojoClass> docPojoClassList = new ArrayList<DocPojoClass>();
-
-            if(!CollectionUtils.isEmpty(returnTag.getMetaData()) && returnTag.getMetaData().containsKey("type")){
-                String[] paramTypes = returnTag.getMetaData().get("type").split(",");
-
-                for(String paramType:paramTypes){
-                    Class paramClass = Parse.parse(paramType.trim(), member.getGenConfig());
-                    if(paramClass != null){
-                        docPojoClassList.add(new DocPojoClass(paramClass));
-                    }
-                }
-
-                return docPojoClassList;
-            } else {
-                Class paramClass = Parse.autoParse(member);
-                if(paramClass != null){
-                    return Lists.newArrayList(new DocPojoClass(paramClass));
-                }
-            }
-
-        }
-
-        return null;
+        return DocParseHelp.autParseParamType(getReturnTag(), member);
     }
 
 
@@ -154,16 +129,7 @@ public class RpcMethod extends RpcApiMember implements DocApiMethod {
                 DocRequestParam requestParam = new DocRequestParam();
                 requestParam.setType(methodParam.getType());
                 requestParam.setName(methodParam.getName());
-
-                if(paramTag != null){
-                    DocParseHelp.parseMethodParamTag(methodParam, paramTag, requestParam);
-                } else {
-                    Class paramClass = Parse.autoParse(methodParam);
-                    if(paramClass != null){
-                        requestParam.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
-                    }
-                }
-
+                requestParam.setTypeDoc(DocParseHelp.autParseParamType(paramTag, methodParam));
                 requestParams.add(requestParam);
             }
 

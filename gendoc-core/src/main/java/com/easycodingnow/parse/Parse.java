@@ -59,9 +59,8 @@ public class Parse {
        return classCache.get(genConfig).get(name);
     }
 
-
-    public static Class autoParse(Member member){
-        String genericType = ParseHelper.findGenericType(member.getType());
+    public static Class autoParse(String type, Member member){
+        String genericType = ParseHelper.findGenericType(type);
         if (ParseHelper.isJavaLangType(genericType)) {
             return null;
         }
@@ -109,6 +108,10 @@ public class Parse {
         }
 
         return null;
+    }
+
+    public static Class autoParse(Member member){
+       return autoParse(member.getType(), member);
     }
 
     public static Class parse(String fullyName, GenConfig genConfig){

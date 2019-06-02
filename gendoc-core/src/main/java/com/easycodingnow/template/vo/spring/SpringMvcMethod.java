@@ -30,6 +30,15 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
 
     private List<DocPojoClass> returnTypes;
 
+    private List<String> skipMethodParam = Lists.newArrayList(
+            "HttpServletResponse",
+            "HttpServletRequest",
+            "Model",
+            "ModelMap",
+            "ModelAndView",
+            "BindingResult"
+    );
+
 
     public SpringMvcMethod(Method member) {
         super(member);
@@ -69,33 +78,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
     }
 
     private List<DocPojoClass> parseReturnType(){
-        Comment.Tag returnTag = getReturnTag();
-
-        if(returnTag != null){
-            List<DocPojoClass> docPojoClassList = new ArrayList<DocPojoClass>();
-
-            if(!CollectionUtils.isEmpty(returnTag.getMetaData()) && returnTag.getMetaData().containsKey("type")){
-                String[] paramTypes = returnTag.getMetaData().get("type").split(",");
-
-                for(String paramType:paramTypes){
-                    Class paramClass = Parse.parse(paramType.trim(), member.getGenConfig());
-                    if(paramClass != null){
-                        docPojoClassList.add(new DocPojoClass(paramClass));
-                    }
-                }
-
-                return docPojoClassList;
-            }
-
-        }
-
-        //智能寻找
-        Class paramClass = Parse.autoParse(member);
-        if(paramClass != null){
-            return Lists.newArrayList(new DocPojoClass(paramClass));
-        }
-
-        return null;
+        return DocParseHelp.autParseParamType(getReturnTag(), member);
     }
 
 
@@ -110,8 +93,8 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
     }
 
     private boolean skipMethodParam(MethodParam methodParam, Comment.Tag tag){
-        if("HttpServletResponse".equals(methodParam.getType()) ||
-                "HttpServletRequest".equals(methodParam.getType())){
+
+        if(skipMethodParam.contains(methodParam.getType())){
             return true;
         }
 
@@ -133,14 +116,9 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
             }
         }
 
-
-
         //other skip condition
-        if(tag != null && StringUtils.isNotEmpty(tag.getContent()) && tag.getContent().contains("#ignore#")){
-            return true;
-        }
+        return tag != null && StringUtils.isNotEmpty(tag.getContent()) && tag.getContent().contains("#ignore#");
 
-        return false;
     }
 
     private List<DocRequestParam> parseRequestParams(){
@@ -189,17 +167,7 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
                     requestParam.setDefaultValue(normalAnnotation.getValue("defaultValue"));
                 }
 
-                if(paramTag != null){
-                    DocParseHelp.parseMethodParamTag(methodParam, paramTag, requestParam);
-                } else {
-                    //智能寻找
-                    Class paramClass = Parse.autoParse(methodParam);
-                    if(paramClass != null){
-                        requestParam.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
-                    }
-                }
-
-
+                requestParam.setTypeDoc(DocParseHelp.autParseParamType(paramTag, methodParam));
                 requestParams.add(requestParam);
             }
 
