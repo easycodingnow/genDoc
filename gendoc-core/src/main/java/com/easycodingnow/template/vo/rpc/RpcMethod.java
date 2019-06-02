@@ -5,6 +5,7 @@ import com.easycodingnow.parse.Parse;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.reflect.*;
 import com.easycodingnow.template.vo.DocApiMethod;
+import com.easycodingnow.template.vo.DocParseHelp;
 import com.easycodingnow.template.vo.DocPojoClass;
 import com.easycodingnow.template.vo.DocRequestParam;
 import com.easycodingnow.utils.CollectionUtils;
@@ -108,9 +109,6 @@ public class RpcMethod extends RpcApiMember implements DocApiMethod {
     }
 
     private boolean skipMethodParam(MethodParam methodParam, Comment.Tag tag){
-        if("RequestContext".equals(methodParam.getType())){
-            return true;
-        }
 
         List<String> ignoreAnnotations = member.getGenConfig().getIgnoreApiAnnotationParam();
         if(!CollectionUtils.isEmpty(ignoreAnnotations) && !CollectionUtils.isEmpty(methodParam.getAnnotations())){
@@ -155,27 +153,14 @@ public class RpcMethod extends RpcApiMember implements DocApiMethod {
 
                 DocRequestParam requestParam = new DocRequestParam();
                 requestParam.setType(methodParam.getType());
-                if(paramTag != null){
-                    requestParam.setDescription(paramTag.getContent());
+                requestParam.setName(methodParam.getName());
 
-                    Map<String, String> metaMap =  paramTag.getMetaData();
-                    if(metaMap != null && metaMap.containsKey("type")){
-                        //注释中包含参数文档类型，进行参数文档的解析
-                        List<DocPojoClass> docPojoClassList = new ArrayList<DocPojoClass>();
-                        String[] paramTypes = metaMap.get("type").split(",");
-                        for(String paramType:paramTypes){
-                            Class paramClass = Parse.parse(paramType.trim(), member.getGenConfig());
-                            if(paramClass != null){
-                                docPojoClassList.add(new DocPojoClass(paramClass));
-                            }
-                        }
-                        requestParam.setTypeDoc(docPojoClassList);
-                    } else {
-                        //智能寻找
-                        Class paramClass = Parse.autoParse(methodParam);
-                        if(paramClass != null){
-                            requestParam.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
-                        }
+                if(paramTag != null){
+                    DocParseHelp.parseMethodParamTag(methodParam, paramTag, requestParam);
+                } else {
+                    Class paramClass = Parse.autoParse(methodParam);
+                    if(paramClass != null){
+                        requestParam.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
                     }
                 }
 

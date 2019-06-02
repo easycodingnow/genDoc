@@ -219,7 +219,7 @@
             <ul>
                 <li id="method-desc"></li>
             </ul>
-            <p><strong>请求URL：</strong></p>
+            <p><strong>请求URI：</strong></p>
             <ul>
                 <li><code id="method-url" style="color: rgb(221, 17, 68);"></code></li>
             </ul>

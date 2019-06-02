@@ -28,6 +28,8 @@ public class GenConfig {
 
     private List<String> ignoreApiTypeParam;
 
+    private List<String> apiScanPackage;
+
     private String outputPath;
 
     private WebType webType = WebType.SPRING_MVC;
@@ -53,6 +55,11 @@ public class GenConfig {
             return false;
         }
 
+        if (WebType.RPC_API.equals(webType) && CollectionUtils.isEmpty(apiScanPackage)) {
+            logger.error("gendoc gen failure！ GenConfig.apiScanPackage was required! rpc类型必须制定扫描的api包");
+            return false;
+        }
+
         return true;
 
     }
@@ -73,7 +80,13 @@ public class GenConfig {
     }
 
 
+    public List<String> getApiScanPackage() {
+        return apiScanPackage;
+    }
 
+    public void setApiScanPackage(List<String> apiScanPackage) {
+        this.apiScanPackage = apiScanPackage;
+    }
 
     public List<String> getSourcePathRoot() {
         return sourcePathRoot;

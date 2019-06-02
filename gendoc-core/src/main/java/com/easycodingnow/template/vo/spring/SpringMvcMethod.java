@@ -5,6 +5,7 @@ import com.easycodingnow.parse.Parse;
 import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.template.vo.DocApiMethod;
+import com.easycodingnow.template.vo.DocParseHelp;
 import com.easycodingnow.template.vo.DocPojoClass;
 import com.easycodingnow.template.vo.DocRequestParam;
 import com.easycodingnow.utils.CollectionUtils;
@@ -164,16 +165,16 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
 
                 requestParam.setType(methodParam.getType());
 
-                if(annotation == null || MarkerAnnotation.class.isInstance(annotation)){
+                if(annotation == null || annotation instanceof MarkerAnnotation){
 
                     requestParam.setName(methodParam.getName());
 
-                }else if(SingleAnnotation.class.isInstance(annotation)){
+                }else if(annotation instanceof SingleAnnotation){
 
                     requestParam.setName(((SingleAnnotation)annotation).getValue());
                     requestParam.setRequired(true);
 
-                }else if(NormalAnnotation.class.isInstance(annotation)){
+                }else if(annotation instanceof NormalAnnotation){
                     NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
 
                     String isRequire = normalAnnotation.getValue("required");
@@ -189,26 +190,12 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
                 }
 
                 if(paramTag != null){
-                    requestParam.setDescription(paramTag.getContent());
-
-                    Map<String, String> metaMap =  paramTag.getMetaData();
-                    if(metaMap != null && metaMap.containsKey("type")){
-                        //注释中包含参数文档类型，进行参数文档的解析
-                        List<DocPojoClass> docPojoClassList = new ArrayList<DocPojoClass>();
-                        String[] paramTypes = metaMap.get("type").split(",");
-                        for(String paramType:paramTypes){
-                            Class paramClass = Parse.parse(paramType.trim(), member.getGenConfig());
-                            if(paramClass != null){
-                                docPojoClassList.add(new DocPojoClass(paramClass));
-                            }
-                        }
-                        requestParam.setTypeDoc(docPojoClassList);
-                    } else {
-                        //智能寻找
-                        Class paramClass = Parse.autoParse(methodParam);
-                        if(paramClass != null){
-                            requestParam.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
-                        }
+                    DocParseHelp.parseMethodParamTag(methodParam, paramTag, requestParam);
+                } else {
+                    //智能寻找
+                    Class paramClass = Parse.autoParse(methodParam);
+                    if(paramClass != null){
+                        requestParam.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
                     }
                 }
 

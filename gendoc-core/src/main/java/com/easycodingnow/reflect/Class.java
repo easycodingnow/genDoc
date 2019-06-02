@@ -15,7 +15,16 @@ public class Class extends Member{
 
     private List<Class> innerClass; //内部类
 
+    private boolean inerface;
 
+
+    public boolean isInerface() {
+        return inerface;
+    }
+
+    public void setInerface(boolean inerface) {
+        this.inerface = inerface;
+    }
 
     public List<Field> getFields() {
         return fields;

@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lihao
@@ -28,17 +30,49 @@ import java.util.List;
  */
 public class Parse {
 
+    private static ConcurrentHashMap<GenConfig, ConcurrentHashMap<String, Class>> classCache = new ConcurrentHashMap<>();
+
     private static final Log logger = LogFactory.getLog(Parse.class);
+
+
+    private static Class addClassCache(GenConfig genConfig, Class cls){
+        if (cls == null) {
+            return null;
+        }
+
+        if (!classCache.containsKey(genConfig)) {
+            classCache.put(genConfig, new ConcurrentHashMap<>());
+        }
+
+        if (StringUtils.isEmpty(cls.getName())) {
+            return null;
+        }
+
+        classCache.get(genConfig).put(cls.getName(), cls);
+        return cls;
+    }
+
+    private static Class getFromCache(GenConfig genConfig, String name){
+        if (!classCache.containsKey(genConfig)) {
+            classCache.put(genConfig, new ConcurrentHashMap<>());
+        }
+       return classCache.get(genConfig).get(name);
+    }
+
 
     public static Class autoParse(Member member){
         String genericType = ParseHelper.findGenericType(member.getType());
         if (ParseHelper.isJavaLangType(genericType)) {
             return null;
         }
+        Class cacheCls = getFromCache(member.getGenConfig(), genericType);
+        if (cacheCls != null) {
+            return cacheCls;
+        }
 
         //完全限定名的话就直接解析
         if (genericType.contains(".")) {
-            return parse(genericType, member.getGenConfig());
+            return  addClassCache(member.getGenConfig(), parse(genericType, member.getGenConfig()));
         }
 
         //先从内部类里面找
@@ -57,7 +91,7 @@ public class Parse {
             for (String importCls:imports) {
                 String[] strArr = importCls.split("\\.");
                 if (strArr[strArr.length - 1].equals(genericType)) {
-                    return parse(importCls, member.getGenConfig());
+                    return addClassCache(member.getGenConfig(), parse(importCls, member.getGenConfig()));
                 }
             }
         }
@@ -67,12 +101,13 @@ public class Parse {
             File file = FileUtils.getJavaFileByFileName(sr,  genericType+ ".java");
             if(file != null && file.exists() && file.isFile()){
                 try {
-                    return parse(new FileInputStream(file), member.getGenConfig());
+                    return addClassCache(member.getGenConfig(), parse(new FileInputStream(file), member.getGenConfig()));
                 } catch (FileNotFoundException e) {
                     logger.error("file not found!", e);
                 }
             }
         }
+
         return null;
     }
 
@@ -83,7 +118,7 @@ public class Parse {
             File file = new File(absPath);
             if(file.exists() && file.isFile()){
                 try {
-                    return parse(new FileInputStream(file), genConfig);
+                    return addClassCache(genConfig, parse(new FileInputStream(file), genConfig));
                 } catch (FileNotFoundException e) {
                     logger.error("file not found!", e);
                 }
@@ -125,6 +160,7 @@ public class Parse {
                         innerCls.setAnnotations(ParseHelper.parseAnnotation(n, innerCls));
                         innerCls.setModifier(ParseHelper.parseModifiers(n));
                         innerCls.setGenConfig(genConfig);
+                        innerCls.setInerface(n.isInterface());
                         innerCls.setPackageName(parentCls.getPackageName());
                         innerCls.setParentMember(parentCls);
 
@@ -135,12 +171,15 @@ public class Parse {
                         }
                         innerClassList.add(innerCls);
                         clsMap.put(n.getNameAsString(), innerCls);
+                        if (StringUtils.isEmpty(cls.getName())) {
+                            System.out.println("asa");
+                        }
                     }else{
                         //最外层的cls
                         cls.setName(n.getNameAsString());
                         cls.setComment(ParseHelper.parseComment(n));
                         cls.setAnnotations(ParseHelper.parseAnnotation(n, cls));
-
+                        cls.setInerface(n.isInterface());
                         if (n.getParentNode().isPresent()
                         && n.getParentNode().get() instanceof CompilationUnit) {
                             CompilationUnit compilationUnit = (CompilationUnit) n.getParentNode().get();
@@ -154,6 +193,9 @@ public class Parse {
                         cls.setModifier(ParseHelper.parseModifiers(n));
                         cls.setGenConfig(genConfig);
                         clsMap.put(n.getNameAsString(), cls);
+                        if (StringUtils.isEmpty(cls.getName())) {
+                            System.out.println("asa");
+                        }
                     }
 
                 }

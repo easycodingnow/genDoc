@@ -1,11 +1,10 @@
 package com.easycodingnow.template.vo.rpc;
 
-import com.easycodingnow.reflect.*;
+import com.easycodingnow.reflect.Annotation;
+import com.easycodingnow.reflect.Member;
+import com.easycodingnow.reflect.NormalAnnotation;
 import com.easycodingnow.template.vo.DocApiMember;
-import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.StringUtils;
-
-import java.util.List;
 
 /**
  * @author lihao
@@ -58,8 +57,8 @@ public abstract class RpcApiMember implements DocApiMember {
         apiDescription = parseApiDescription();
 
         //解析请求类型
-        requestMethod = "POST(application/json)";
-        isPostJson = true;
+        requestMethod = "";
+        isPostJson = false;
 
         //解析请求地址
         requestPath = parseRequestPath();
@@ -86,6 +85,7 @@ public abstract class RpcApiMember implements DocApiMember {
 
 
     private String parseRequestPath(){
+        //这里定义Api注解获取请求path,如果没有就取方法名称
         Annotation annotation = member.getAnnotationByName("Api");
         String path = "";
         if(annotation != null){
@@ -107,6 +107,12 @@ public abstract class RpcApiMember implements DocApiMember {
 
         if(path.endsWith("/")){
             path = path.substring(0, path.length()-1);
+        }
+
+        if (StringUtils.isEmpty(path)) {
+           if (member.getParentMember() != null) {
+               path = member.getParentMember().getName() + "." + member.getName();
+           }
         }
 
         return path;

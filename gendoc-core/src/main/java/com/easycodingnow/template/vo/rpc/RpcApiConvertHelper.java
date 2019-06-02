@@ -1,6 +1,5 @@
 package com.easycodingnow.template.vo.rpc;
 
-import com.easycodingnow.reflect.Annotation;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.reflect.Method;
 import com.easycodingnow.template.vo.DocApiMethod;
@@ -17,15 +16,11 @@ public class RpcApiConvertHelper {
 
     private static boolean  isRpcAction(Method method){
 
-        List<Annotation> annotations = method.getAnnotations();
-
-        if(annotations != null && annotations.size() > 0){
-            for(Annotation annotation:annotations){
-                if(annotation.getName().equals("Api")){
-                    return true;
-                }
-            }
+        if (method.getParentMember() instanceof Class) {
+            Class cls = (Class) method.getParentMember();
+            return cls.isInerface();
         }
+
         return false;
     }
 
