@@ -171,9 +171,6 @@ public class Parse {
                         }
                         innerClassList.add(innerCls);
                         clsMap.put(n.getNameAsString(), innerCls);
-                        if (StringUtils.isEmpty(cls.getName())) {
-                            System.out.println("asa");
-                        }
                     }else{
                         //最外层的cls
                         cls.setName(n.getNameAsString());
