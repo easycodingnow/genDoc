@@ -22,8 +22,10 @@ public class SpringConvertHelper {
         if(annotations != null && annotations.size() > 0){
             for(Annotation annotation:annotations){
                 if(annotation.getName().equals("RequestMapping") ||
-                annotation.getName().endsWith("GetMapping") ||
-                annotation.getName().endsWith("PostMapping")){
+                annotation.getName().equals("GetMapping") ||
+                annotation.getName().equals("DeleteMapping") ||
+                annotation.getName().equals("PutMapping") ||
+                annotation.getName().equals("PostMapping")){
                     return true;
                 }
             }
