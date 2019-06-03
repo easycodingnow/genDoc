@@ -136,8 +136,8 @@ public class GenDoc {
             return null;
         }
 
-        if(!cls.ignore()){
-            return RpcApiConvertHelper.convertToRpcApi(cls);
+        if(cls.ignore()){
+            return null;
         }
 
         for (String packageName:genConfig.getApiScanPackage()){
