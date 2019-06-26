@@ -3,6 +3,7 @@ package com.easycodingnow;
 import com.alibaba.fastjson.JSON;
 import com.easycodingnow.parse.Parse;
 import com.easycodingnow.reflect.Class;
+import com.easycodingnow.reflect.Method;
 import com.easycodingnow.template.TemplateParse;
 import com.easycodingnow.template.vo.DocApiApiClass;
 import com.easycodingnow.template.vo.rpc.RpcApiConvertHelper;
@@ -140,11 +141,20 @@ public class GenDoc {
             return null;
         }
 
-        for (String packageName:genConfig.getApiScanPackage()){
-            if (cls.getPackageName().startsWith(packageName)) {
-                return RpcApiConvertHelper.convertToRpcApi(cls);
+        if (!CollectionUtils.isEmpty(genConfig.getApiScanPackage())) {
+            for (String packageName:genConfig.getApiScanPackage()){
+                if (cls.getPackageName().startsWith(packageName)) {
+                    return RpcApiConvertHelper.convertToRpcApi(cls);
+                }
+            }
+        } else {
+            for (Method method:cls.getMethods()) {
+                if (method.getAnnotationByName("Api") != null) {
+                    return RpcApiConvertHelper.convertToRpcApi(cls);
+                }
             }
         }
+
         return null;
     }
 

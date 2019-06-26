@@ -55,11 +55,6 @@ public class GenConfig {
             return false;
         }
 
-        if (WebType.RPC_API.equals(webType) && CollectionUtils.isEmpty(apiScanPackage)) {
-            logger.error("gendoc gen failure！ GenConfig.apiScanPackage was required! rpc类型必须制定扫描的api包");
-            return false;
-        }
-
         return true;
 
     }

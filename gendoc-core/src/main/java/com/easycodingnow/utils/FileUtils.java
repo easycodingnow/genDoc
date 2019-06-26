@@ -61,7 +61,7 @@ public class FileUtils {
                 for (File childFile : childFiles) {
                     if (childFile.isDirectory()) {
                         String absPath = childFile.getAbsolutePath();
-                        if (absPath.endsWith("src/main/java")) {
+                        if (absPath.endsWith("src"+ File.separator +"main" + File.separator + "java")) {
                             fileList.add(absPath);
                             break;
                         } else {

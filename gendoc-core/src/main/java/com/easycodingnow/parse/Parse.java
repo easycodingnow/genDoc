@@ -1,15 +1,17 @@
 package com.easycodingnow.parse;
 
 import com.easycodingnow.GenConfig;
-import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
+import com.easycodingnow.reflect.*;
 import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.FileUtils;
 import com.easycodingnow.utils.StringUtils;
 import com.github.javaparser.JavaParser;
-import com.github.javaparser.ast.*;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.*;
-import com.github.javaparser.ast.nodeTypes.NodeWithAnnotations;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -21,7 +23,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -117,7 +118,7 @@ public class Parse {
     public static Class parse(String fullyName, GenConfig genConfig){
 
         for(String sr:genConfig.getSourcePathRoot()){
-            String absPath = sr+"/"+fullyName.replaceAll("\\.", "/")+".java";
+            String absPath = sr+ File.separator +fullyName.replaceAll("\\.", File.separator)+".java";
             File file = new File(absPath);
             if(file.exists() && file.isFile()){
                 try {
