@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
 
 /**
  * @author lihao
@@ -118,7 +119,7 @@ public class Parse {
     public static Class parse(String fullyName, GenConfig genConfig){
 
         for(String sr:genConfig.getSourcePathRoot()){
-            String absPath = sr+ File.separator +fullyName.replaceAll("\\.", File.separator)+".java";
+            String absPath = sr+ File.separator +fullyName.replaceAll("\\.", Matcher.quoteReplacement(File.separator))+".java";
             File file = new File(absPath);
             if(file.exists() && file.isFile()){
                 try {
