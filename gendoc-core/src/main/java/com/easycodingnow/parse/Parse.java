@@ -71,6 +71,7 @@ public class Parse {
             return cacheCls;
         }
 
+
         //完全限定名的话就直接解析
         if (genericType.contains(".")) {
             return  addClassCache(member.getGenConfig(), parse(genericType, member.getGenConfig()));

@@ -28,6 +28,10 @@ public class GenConfig {
 
     private List<String> ignoreApiTypeParam;
 
+    private List<String> apiScanAnnotation;
+
+    private List<String> apiScanCommentTag;
+
     private List<String> apiScanPackage;
 
     private String outputPath;
@@ -146,6 +150,21 @@ public class GenConfig {
         this.ignoreApiAnnotationParam = ignoreApiAnnotationParam;
     }
 
+    public List<String> getApiScanAnnotation() {
+        return apiScanAnnotation;
+    }
+
+    public void setApiScanAnnotation(List<String> apiScanAnnotation) {
+        this.apiScanAnnotation = apiScanAnnotation;
+    }
+
+    public List<String> getApiScanCommentTag() {
+        return apiScanCommentTag;
+    }
+
+    public void setApiScanCommentTag(List<String> apiScanCommentTag) {
+        this.apiScanCommentTag = apiScanCommentTag;
+    }
 
     public List<String> getIgnoreApiTypeParam() {
         return ignoreApiTypeParam;

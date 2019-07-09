@@ -1,6 +1,7 @@
 package com.easycodingnow.template.vo;
 
 import com.easycodingnow.parse.Parse;
+import com.easycodingnow.parse.ParseHelper;
 import com.easycodingnow.reflect.Class;
 import com.easycodingnow.reflect.*;
 import com.easycodingnow.utils.CollectionUtils;
@@ -133,10 +134,12 @@ public class DocPojoClass {
                 }
 
                 if (CollectionUtils.isEmpty(docField.getTypeDoc())) {
-                    //尝试字段解析类型
-                    Class paramClass = Parse.autoParse(field);
-                    if(paramClass != null){
-                        docField.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
+                    //尝试字段解析类型，和类名一样，不解析，防止循环引用
+                    if (!cls.getName().equals(ParseHelper.findGenericType(field.getType()))) {
+                        Class paramClass = Parse.autoParse(field);
+                        if(paramClass != null){
+                            docField.setTypeDoc(Lists.newArrayList(new DocPojoClass(paramClass)));
+                        }
                     }
                 }
 

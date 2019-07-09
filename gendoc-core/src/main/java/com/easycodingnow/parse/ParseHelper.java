@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * @author lihao
  * @since 2018/3/8
  */
-class ParseHelper {
+public class ParseHelper {
 
     static private List<String> JAVA_LANG_TYPE = Lists.newArrayList(
                 "String",

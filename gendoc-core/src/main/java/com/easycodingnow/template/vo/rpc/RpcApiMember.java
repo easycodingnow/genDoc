@@ -1,10 +1,11 @@
 package com.easycodingnow.template.vo.rpc;
 
-import com.easycodingnow.reflect.Annotation;
-import com.easycodingnow.reflect.Member;
-import com.easycodingnow.reflect.NormalAnnotation;
+import com.easycodingnow.reflect.*;
 import com.easycodingnow.template.vo.DocApiMember;
+import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.StringUtils;
+
+import java.util.List;
 
 /**
  * @author lihao
@@ -57,7 +58,7 @@ public abstract class RpcApiMember implements DocApiMember {
         apiDescription = parseApiDescription();
 
         //解析请求类型
-        requestMethod = "";
+        requestMethod = "POST(application/json)";
         isPostJson = false;
 
         //解析请求地址
@@ -83,30 +84,52 @@ public abstract class RpcApiMember implements DocApiMember {
         return member.getCommentDesc();
     }
 
-
+    /**
+     * @path sdsd
+     * @return
+     */
     private String parseRequestPath(){
         //这里定义Api注解获取请求path,如果没有就取方法名称
-        Annotation annotation = member.getAnnotationByName("Api");
+
+        List<String> apiScanAnnotation = member.getGenConfig().getApiScanAnnotation();
+        List<String> scanCommentTag = member.getGenConfig().getApiScanCommentTag();
+
         String path = "";
-        if(annotation != null){
-            if(annotation instanceof NormalAnnotation){
-                NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
-                path = normalAnnotation.getValue("path");
-                if(path.contains("\"")){
-                    path = path.substring(1);
-                    path = path.substring(0, path.length()-1);
-                    path = path.replace("\"","").trim();
-                    if(path.contains(",")){
-                        //说明有多个
-                        path = "["+path+"]";
+
+        List<Annotation> annotations = member.getAnnotations();
+        if (!CollectionUtils.isEmpty(apiScanAnnotation) && !CollectionUtils.isEmpty(annotations)) {
+            for (Annotation annotation:annotations) {
+                if (apiScanAnnotation.contains(annotation.getName())) {
+                    if(annotation instanceof NormalAnnotation){
+                        NormalAnnotation normalAnnotation = (NormalAnnotation)annotation;
+                        path = normalAnnotation.getValue("path");
+                    } else if (annotation instanceof SingleAnnotation) {
+                        path = ((SingleAnnotation)annotation).getValue();
                     }
+
+                    if(StringUtils.isNotEmpty(path) && path.contains("\"")){
+                        path = path.substring(1);
+                        path = path.substring(0, path.length()-1);
+                        path = path.replace("\"","").trim();
+                        if(path.contains(",")){
+                            //说明有多个
+                            path = "["+path+"]";
+                        }
+                    }
+                    break;
                 }
 
             }
         }
 
-        if(path.endsWith("/")){
-            path = path.substring(0, path.length()-1);
+        if (!CollectionUtils.isEmpty(scanCommentTag) && member.getComment() != null
+        && !CollectionUtils.isEmpty(member.getComment().getTags())) {
+            for (Comment.Tag tag:member.getComment().getTags()) {
+                if (scanCommentTag.contains(tag.getTagName())) {
+                    path =  tag.getContent();
+                    break;
+                }
+            }
         }
 
         if (StringUtils.isEmpty(path)) {

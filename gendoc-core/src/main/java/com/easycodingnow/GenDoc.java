@@ -2,8 +2,8 @@ package com.easycodingnow;
 
 import com.alibaba.fastjson.JSON;
 import com.easycodingnow.parse.Parse;
+import com.easycodingnow.reflect.*;
 import com.easycodingnow.reflect.Class;
-import com.easycodingnow.reflect.Method;
 import com.easycodingnow.template.TemplateParse;
 import com.easycodingnow.template.vo.DocApiApiClass;
 import com.easycodingnow.template.vo.rpc.RpcApiConvertHelper;
@@ -11,6 +11,7 @@ import com.easycodingnow.template.vo.spring.SpringConvertHelper;
 import com.easycodingnow.utils.CollectionUtils;
 import com.easycodingnow.utils.FileUtils;
 import com.easycodingnow.utils.IOUtils;
+import com.easycodingnow.utils.StringUtils;
 import com.google.common.base.Stopwatch;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -149,8 +150,26 @@ public class GenDoc {
             }
         } else {
             for (Method method:cls.getMethods()) {
-                if (method.getAnnotationByName("Api") != null) {
-                    return RpcApiConvertHelper.convertToRpcApi(cls);
+                List<String> apiScanAnnotation = method.getGenConfig().getApiScanAnnotation();
+                List<String> scanCommentTag = method.getGenConfig().getApiScanCommentTag();
+                List<Annotation> annotations = method.getAnnotations();
+
+                if (!CollectionUtils.isEmpty(apiScanAnnotation) && !CollectionUtils.isEmpty(annotations)) {
+                    for (Annotation annotation:annotations) {
+                        if (apiScanAnnotation.contains(annotation.getName())) {
+                            return RpcApiConvertHelper.convertToRpcApi(cls);
+                        }
+
+                    }
+                }
+
+                if (!CollectionUtils.isEmpty(scanCommentTag) && method.getComment() != null
+                        && !CollectionUtils.isEmpty(method.getComment().getTags())) {
+                    for (Comment.Tag tag:method.getComment().getTags()) {
+                        if (scanCommentTag.contains(tag.getTagName())) {
+                            return RpcApiConvertHelper.convertToRpcApi(cls);
+                        }
+                    }
                 }
             }
         }

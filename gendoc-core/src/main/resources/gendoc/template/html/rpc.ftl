@@ -223,10 +223,6 @@
             <ul>
                 <li><code id="method-url" style="color: rgb(221, 17, 68);"></code></li>
             </ul>
-            <p><strong>是否要登陆：</strong></p>
-            <ul>
-                <li id="need-login"></li>
-            </ul>
             <p><strong>请求方式：</strong></p>
             <ul>
                 <li id="method-way"></li>
@@ -471,8 +467,6 @@
 
         $("#method-url").text(cls['requestPath'] + methodPath);
         $("#method-way").text(method['requestMethod']);
-        $("#need-login").text(method['needLogin']);
-
         $("#method-params tbody").empty();
 
 
