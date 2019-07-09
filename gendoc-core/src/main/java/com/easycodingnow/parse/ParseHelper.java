@@ -87,6 +87,7 @@ public class ParseHelper {
         return val;
     }
 
+
     /**
      * 寻找泛型参数
      * @param val
@@ -98,20 +99,22 @@ public class ParseHelper {
         Matcher m = r.matcher(val);
         String findType = val;
         while (m.find()) {
+            String a =  m.group(0);
             String matchStr = m.group(0).substring(1, m.group(0).length() - 1);
-            if (matchStr.contains(",")) { //说明是map集合，去value的类型
-                findType = findGenericType(matchStr.split(",")[1]);
-            } else if (matchStr.contains("<")) {
+            if (matchStr.contains("<")) {
                 findType = findGenericType(matchStr);
+            } else if (matchStr.contains(",")) {
+                findType = findGenericType(matchStr.split(",")[1].trim());
             } else {
                 findType = matchStr;
             }
+
         }
         return findType;
     }
 
     public static void main(String[] args) {
-        System.out.println(findGenericType("String"));
+        System.out.println(findGenericType("Result<Map<Long, SimpleGoodsInfo>>"));
         System.out.println(findGenericType("List<String>"));
         System.out.println(findGenericType("List<List<String>>"));
         System.out.println(findGenericType("List<List<String>>"));
