@@ -99,7 +99,6 @@ public class ParseHelper {
         Matcher m = r.matcher(val);
         String findType = val;
         while (m.find()) {
-            String a =  m.group(0);
             String matchStr = m.group(0).substring(1, m.group(0).length() - 1);
             if (matchStr.contains("<")) {
                 findType = findGenericType(matchStr);
@@ -113,14 +112,6 @@ public class ParseHelper {
         return findType;
     }
 
-    public static void main(String[] args) {
-        System.out.println(findGenericType("Result<Map<Long, SimpleGoodsInfo>>"));
-        System.out.println(findGenericType("List<String>"));
-        System.out.println(findGenericType("List<List<String>>"));
-        System.out.println(findGenericType("List<List<String>>"));
-        System.out.println(findGenericType("Map<Sting,Sting>"));
-        System.out.println(findGenericType("Map<String,List<ds>>"));
-    }
 
     static List<Annotation> parseAnnotation(NodeWithAnnotations<? extends Node> nodeWithAnnotations, Member member) {
         NodeList<AnnotationExpr> annotationExprs = nodeWithAnnotations.getAnnotations();
@@ -131,9 +122,9 @@ public class ParseHelper {
             for (AnnotationExpr annotationExpr : annotationExprs) {
                 Annotation annotation = null;
 
-                if (MarkerAnnotationExpr.class.isInstance(annotationExpr)) {
+                if (annotationExpr instanceof MarkerAnnotationExpr) {
                     annotation = new MarkerAnnotation();
-                } else if (SingleMemberAnnotationExpr.class.isInstance(annotationExpr)) {
+                } else if (annotationExpr instanceof SingleMemberAnnotationExpr) {
                     SingleMemberAnnotationExpr singleMemberAnnotationExpr = (SingleMemberAnnotationExpr) annotationExpr;
 
                     annotation = new SingleAnnotation();
@@ -141,7 +132,7 @@ public class ParseHelper {
 
                     SingleAnnotation singleAnnotation = (SingleAnnotation) annotation;
                     singleAnnotation.setValue(annotationValueTrim(singleMemberAnnotationExpr.getMemberValue().toString()));
-                } else if (NormalAnnotationExpr.class.isInstance(annotationExpr)) {
+                } else if (annotationExpr instanceof NormalAnnotationExpr) {
                     NormalAnnotationExpr normalAnnotationExpr = (NormalAnnotationExpr) annotationExpr;
 
                     annotation = new NormalAnnotation();

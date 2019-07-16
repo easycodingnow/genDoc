@@ -142,6 +142,10 @@ public class GenDoc {
             return null;
         }
 
+        if (CollectionUtils.isEmpty(cls.getMethods())) {
+            return null;
+        }
+
         if (!CollectionUtils.isEmpty(genConfig.getApiScanPackage())) {
             for (String packageName:genConfig.getApiScanPackage()){
                 if (cls.getPackageName().startsWith(packageName)) {
