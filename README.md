@@ -54,10 +54,6 @@ Help you to generate API documents
 ![Alt](https://pic2.zhimg.com/v2-89c0f05a60609648d2bc9183fb3ed95d_r.jpg)
 
 
-# 联系方式
-* 如果你在使用过程中，有遇到任何问题或者疑问，可以随时提交issue.或者加入qq群交流
-<img src="https://pic3.zhimg.com/v2-d82f4a4c334ff56a61cae32546190512_r.jpg" width = "270" height = "365" alt="图片名称" align=center />
-
 
 
 
