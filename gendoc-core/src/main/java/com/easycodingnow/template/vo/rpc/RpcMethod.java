@@ -130,6 +130,9 @@ public class RpcMethod extends RpcApiMember implements DocApiMethod {
                 requestParam.setType(methodParam.getType());
                 requestParam.setName(methodParam.getName());
                 requestParam.setTypeDoc(DocParseHelp.autParseParamType(paramTag, methodParam));
+                if (paramTag != null) {
+                    requestParam.setDescription(paramTag.getContent());
+                }
                 requestParams.add(requestParam);
             }
 

@@ -166,7 +166,9 @@ public class SpringMvcMethod extends SpringMvcApiMember implements DocApiMethod 
                     }
                     requestParam.setDefaultValue(normalAnnotation.getValue("defaultValue"));
                 }
-
+                if (paramTag != null) {
+                    requestParam.setDescription(paramTag.getContent());
+                }
                 requestParam.setTypeDoc(DocParseHelp.autParseParamType(paramTag, methodParam));
                 requestParams.add(requestParam);
             }
