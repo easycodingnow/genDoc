@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 //添加#ignore#也会跳过此controller的解析
 /**
- * #ignore#
  * @author lihao
  * @since 2018/3/21
  */

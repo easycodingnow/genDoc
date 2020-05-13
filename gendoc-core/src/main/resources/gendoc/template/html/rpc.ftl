@@ -227,6 +227,14 @@
             <ul>
                 <li id="method-way"></li>
             </ul>
+            <p><strong>service：</strong></p>
+            <ul>
+                <li><code id="method-service"></code></li>
+            </ul>
+            <p><strong>method：</strong></p>
+            <ul>
+                <li><code id="method-method"></code></li>
+            </ul>
             <p><strong>参数：</strong></p>
             <div style="width: 100%;overflow-x: auto;">
                 <table id="method-params">
@@ -467,6 +475,8 @@
 
         $("#method-url").text(cls['requestPath'] + methodPath);
         $("#method-way").text(method['requestMethod']);
+        $("#method-service").text(method['fullClsName']);
+        $("#method-method").text(method['methodName']);
         $("#method-params tbody").empty();
 
 

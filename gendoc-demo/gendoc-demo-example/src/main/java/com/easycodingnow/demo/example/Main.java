@@ -4,6 +4,7 @@ import com.easycodingnow.GenConfig;
 import com.easycodingnow.GenDoc;
 import com.easycodingnow.gendoc.web.GenDocWebApp;
 import com.easycodingnow.gendoc.web.GenWebConfig;
+import com.google.common.collect.Lists;
 
 /**
  * @author lihao
@@ -29,8 +30,13 @@ public class Main {
      */
     private static void genDoc(){
 
-        String sourcePath = "";
-        String outPath = "";
-        GenDoc.gen(sourcePath, outPath);
+
+        GenConfig genConfig = new GenConfig();
+        genConfig.setApiScanCommentTag(Lists.newArrayList("apiNote"));
+        genConfig.setSourcePath("/Users/lihao/Desktop/java/genDoc/gendoc-demo/gendoc-demo-web1");
+        genConfig.setOutputPath("/Users/lihao/Desktop/java/genDoc/gendoc-demo/gendoc-demo-web1");
+        genConfig.setWebType(GenConfig.WebType.SPRING_MVC);
+        genConfig.setOutPutType(GenConfig.OutPutType.RPC_HTML);
+        GenDoc.gen(genConfig);
     }
 }

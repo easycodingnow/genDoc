@@ -12,4 +12,8 @@ public interface DocApiMethod extends DocApiMember {
 
 
      String getReturnDesc();
+
+     String getMethodName();
+
+     String getFullClsName();
 }

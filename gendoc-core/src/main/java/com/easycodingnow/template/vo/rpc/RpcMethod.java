@@ -53,6 +53,17 @@ public class RpcMethod extends RpcApiMember implements DocApiMethod {
         return returnDesc;
     }
 
+    @Override
+    public String getMethodName() {
+        return member.getName();
+    }
+
+    @Override
+    public String getFullClsName() {
+        return member.getPackageName() + "." + member.getParentMember().getName();
+    }
+
+
 
     public List<DocPojoClass> getReturnTypes() {
         return returnTypes;
